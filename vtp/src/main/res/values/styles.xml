@@ -1,0 +1,17 @@
+<resources>
+
+    <style name="MaterialButton">
+        <item name="android:colorControlHighlight">#FAFAFA</item>
+        <item name="colorButtonNormal">?attr/colorAccent</item>
+        <item name="android:textColor">#fff</item>
+        <item name="android:elevation">10dp</item>
+    </style>
+    <style name="RippleRound">
+        <item name="android:colorControlHighlight">#FAFAFA</item>
+        <item name="android:radius">25dp</item>
+    </style>
+    <style name="BaseDialog" parent="android:Theme.Material.Light.Dialog.NoActionBar">
+        <item name="windowMinWidthMajor">85%</item>
+        <item name="windowMinWidthMinor">80%</item>
+    </style>
+</resources>
