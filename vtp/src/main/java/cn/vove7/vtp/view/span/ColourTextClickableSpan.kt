@@ -22,7 +22,7 @@ class ColourTextClickableSpan
 /**
  * @param fontSize 单位sp
  */
-(internal var context: Context, private val text: String,
+(internal var context: Context, text: String,
  @ColorRes private val colorId: Int = defaultColor, private var fontSize: Int = -1,
  private val listener: View.OnClickListener?) : ClickableSpan() {
     var spanStr: SpannableString
@@ -46,6 +46,6 @@ class ColourTextClickableSpan
 
     companion object {
 
-        private const val defaultColor = R.color.default_text_color
+        private val defaultColor = R.color.default_text_color
     }
 }
