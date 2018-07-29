@@ -10,7 +10,7 @@ import android.provider.Settings
  *
  * Created by Vove on 2018/6/14
  */
-object AppUtil {
+object AppHelper {
 
     /**
      * 跳转App详情页
@@ -55,5 +55,15 @@ object AppUtil {
             ))
         }
         return appList
+    }
+
+    /**
+     * 返回桌面
+     */
+    fun toHome(context: Context) {
+        val home = Intent(Intent.ACTION_MAIN)
+        home.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+        home.addCategory(Intent.CATEGORY_HOME)
+        context.startActivity(home)
     }
 }

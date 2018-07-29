@@ -19,7 +19,6 @@ object Vog {
     /**
      * 网络日志
      */
-    private var sendToServer = false
     private var logServer: String = ""
     /**
      * 本地日志
@@ -37,10 +36,9 @@ object Vog {
     /**
      * @param outputLevel Log.***
      */
-    fun init(context: Context, outputLevel: Int, sendToServer: Boolean = false): Vog {
+    fun init(context: Context, outputLevel: Int): Vog {
         output_level = outputLevel
         logPath = context.externalCacheDir.parent
-        this.sendToServer = sendToServer
         return this
     }
 
@@ -94,7 +92,7 @@ object Vog {
         if (output_level <= priority) {
             Log.println(priority,"Vog: $tag" , msg + '\n')
         }
-        if (localLogLevel <= priority) {
+        if (log2Local && localLogLevel <= priority) {
             val date = dateFormat.format(Date(System.currentTimeMillis()))
             log2File("$date: $tag: $msg")
         }

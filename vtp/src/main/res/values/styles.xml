@@ -1,11 +1,13 @@
 <resources>
 
+    <!--按钮-->
     <style name="MaterialButton">
         <item name="android:colorControlHighlight">#FAFAFA</item>
         <item name="colorButtonNormal">?attr/colorAccent</item>
         <item name="android:textColor">#fff</item>
         <item name="android:elevation">10dp</item>
     </style>
+    <!--圆形按钮波纹效果-->
     <style name="RippleRound">
         <item name="android:colorControlHighlight">#FAFAFA</item>
         <item name="android:radius">25dp</item>
@@ -13,5 +15,9 @@
     <style name="BaseDialog" parent="android:Theme.Material.Light.Dialog.NoActionBar">
         <item name="windowMinWidthMajor">85%</item>
         <item name="windowMinWidthMinor">80%</item>
+    </style>
+    <style name="pop_anim">
+        <item name="android:windowEnterAnimation">@anim/pop_fain_in</item>
+        <item name="android:windowExitAnimation">@anim/pop_fain_out</item>
     </style>
 </resources>

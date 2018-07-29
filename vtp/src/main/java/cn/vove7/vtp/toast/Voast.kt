@@ -2,8 +2,12 @@ package cn.vove7.vtp.toast
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.drawable.Drawable
+import android.support.annotation.DrawableRes
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import cn.vove7.vtp.R
@@ -21,8 +25,8 @@ class Voast(
         private val outDebug: Boolean
 ) {
     private lateinit var msgView: TextView
+    private lateinit var icon: ImageView
     private val animations = -1
-    private val isShow = false
     lateinit var toast: Toast
     @SuppressLint("ShowToast")
 
@@ -31,14 +35,30 @@ class Voast(
         val inflate = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val v = inflate.inflate(R.layout.vtoast_layout, null)
         msgView = v.findViewById(R.id.message) as TextView
+        icon = v.findViewById(R.id.icon) as ImageView
         toast.view = v
 
         return bottom()
     }
 
-    fun showShort(msg: String) {
-        show(msg, Toast.LENGTH_SHORT)
+    private fun setIconWithDrawableId(dId: Int) {
+        if (dId != -1) {
+            icon.visibility = View.VISIBLE
+            icon.setImageResource(dId)
+        } else {
+            icon.visibility = View.GONE
+        }
     }
+
+    private fun setIconWithDrawable(d: Drawable?) {
+        if (d != null) {
+            icon.visibility = View.VISIBLE
+            icon.setImageDrawable(d)
+        } else {
+            icon.visibility = View.GONE
+        }
+    }
+
 
     fun top(xOffset: Int = 0, yOffset: Int = 40): Voast {
         toast.setGravity(Gravity.TOP, xOffset, yOffset)
@@ -55,8 +75,26 @@ class Voast(
         return this
     }
 
+    fun showShort(msg: String, @DrawableRes dId: Int = -1) {
+        setIconWithDrawableId(dId)
+        show(msg, Toast.LENGTH_SHORT)
+    }
+    fun showShort(msg: String) {
+        show(msg, Toast.LENGTH_SHORT)
+    }
 
-    fun showLong(msg: String) {
+    fun showShort(msg: String, d: Drawable? = null) {
+        setIconWithDrawable(d)
+        show(msg, Toast.LENGTH_SHORT)
+    }
+
+    fun showLong(msg: String, @DrawableRes dId: Int = -1) {
+        setIconWithDrawableId(dId)
+        show(msg, Toast.LENGTH_LONG)
+    }
+
+    fun showLong(msg: String, d: Drawable? = null) {
+        setIconWithDrawable(d)
         show(msg, Toast.LENGTH_LONG)
     }
 
@@ -67,7 +105,7 @@ class Voast(
         try {
             msgView.text = msg
         } catch (e: Exception) {
-            Vog.wtf(this, e.message?:"")
+            Vog.wtf(this, e.message ?: "")
         }
         toast.show()
     }

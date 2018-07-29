@@ -27,6 +27,7 @@ maven:
 ```
 
 * Step 2. Add the dependency
+
 gradle:
 ```groovy
 dependencies {
