@@ -3,6 +3,10 @@ package cn.vove7.vtp.toast
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.Message
 import android.support.annotation.DrawableRes
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -27,7 +31,7 @@ class Voast(
     private lateinit var msgView: TextView
     private lateinit var icon: ImageView
     private val animations = -1
-    lateinit var toast: Toast
+    private lateinit var toast: Toast
     @SuppressLint("ShowToast")
 
     fun build(): Voast {
@@ -79,7 +83,9 @@ class Voast(
         setIconWithDrawableId(dId)
         show(msg, Toast.LENGTH_SHORT)
     }
+
     fun showShort(msg: String) {
+        setIconWithDrawable(null)
         show(msg, Toast.LENGTH_SHORT)
     }
 
@@ -98,16 +104,18 @@ class Voast(
         show(msg, Toast.LENGTH_LONG)
     }
 
-    private fun show(msg: String, d: Int = Toast.LENGTH_SHORT) {
+    fun showLong(msg: String) {
+        setIconWithDrawable(null)
+        show(msg, Toast.LENGTH_LONG)
+    }
+
+    private val voastHandler = VoastHandler(this)
+
+    fun show(msg: String, d: Int = Toast.LENGTH_SHORT) {
         if (outDebug)
             Vog.d(this, msg)
-        toast.duration = d
-        try {
-            msgView.text = msg
-        } catch (e: Exception) {
-            Vog.wtf(this, e.message ?: "")
-        }
-        toast.show()
+
+        voastHandler.sendMessage(voastHandler.buildVoastMessage(msg, d))
     }
 
     companion object {
@@ -116,4 +124,28 @@ class Voast(
         }
     }
 
+    class VoastHandler(private val voast:Voast) : Handler(Looper.getMainLooper()) {
+
+        override fun handleMessage(msg: Message?) {
+            if (msg == null) return
+            val m = msg.data["msg"] as String?
+            val l = msg.data["l"] as Int
+            try {
+                voast.toast.duration = l
+                voast.msgView.text = m
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            voast.toast.show()
+        }
+
+        fun buildVoastMessage(msg: String, l: Int = Toast.LENGTH_SHORT): Message {
+            val data = Bundle()
+            data.putString("msg", msg)
+            data.putInt("l", l)
+            val m = Message()
+            m.data = data
+            return m
+        }
+    }
 }
