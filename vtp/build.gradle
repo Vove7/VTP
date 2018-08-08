@@ -46,7 +46,7 @@ android {
 
 dependencies {
     String kotlin_version = '1.2.51'
-    api fileTree(include: ['*.jar'], dir: 'libs')
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     api 'com.android.support:appcompat-v7:27.1.1'
     testImplementation 'junit:junit:4.12'
     api 'com.google.code.gson:gson:2.8.5'
