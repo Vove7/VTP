@@ -45,15 +45,16 @@ android {
 }
 
 dependencies {
-    String kotlin_version = '1.2.51'
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    api fileTree(include: ['*.jar'], dir: 'libs')
     api 'com.android.support:appcompat-v7:27.1.1'
-    testImplementation 'junit:junit:4.12'
     api 'com.google.code.gson:gson:2.8.5'
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.51"
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.60'
     api 'com.squareup.okhttp3:okhttp:3.11.0'
     api 'com.github.bumptech.glide:glide:4.7.1'
     api 'jp.wasabeef:glide-transformations:3.3.0'
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 }
 repositories {
     mavenCentral()

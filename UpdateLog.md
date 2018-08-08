@@ -1,5 +1,8 @@
 # Update Log
 
+- 2018-8-8
+  - fix `TextTransHelper.chineseStr2Pinyin`
+
 - 2018-8-3
   - add `StreamHelper.copy`
   - add `AssetHelper.copy2File`

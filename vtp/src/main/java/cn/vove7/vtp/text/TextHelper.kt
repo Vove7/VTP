@@ -1,10 +1,6 @@
 package cn.vove7.vtp.text
 
-import net.sourceforge.pinyin4j.PinyinHelper
-import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType
-import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat
-import net.sourceforge.pinyin4j.format.HanyuPinyinToneType
-import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombination
+import android.content.Context
 
 
 /**
@@ -15,40 +11,11 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 object TextHelper {
 
     /**
-     * 汉字转拼音
-     * 一字多音？😔
-     */
-    fun chineseStr2Pinyin(words: String, onlyFirst: Boolean = false): String {
-        var pinyinStr = ""
-        val newChar = words.toCharArray()
-        val defaultFormat = HanyuPinyinOutputFormat()
-        defaultFormat.caseType = HanyuPinyinCaseType.LOWERCASE
-        defaultFormat.toneType = HanyuPinyinToneType.WITHOUT_TONE
-        for (c in newChar) {
-            pinyinStr += if (c.toInt() > 128) {
-                try {
-                    val all = PinyinHelper.toHanyuPinyinStringArray(c, defaultFormat)[0]
-                    if (onlyFirst) "${all[0]}" else all
-                } catch (e: BadHanyuPinyinOutputFormatCombination) {
-                    println(e.message ?: e.toString())
-                    c
-                } catch (ne: NullPointerException) {
-                    println(ne.message ?: ne.toString())
-                    c
-                }
-            } else {
-                c
-            }
-        }
-        return pinyinStr
-    }
-
-    /**
      * 汉字转拼音再比较相似度
      */
-
-    fun compareSimilarityWithPinyin(str1: String, str2: String, ignoreCase: Boolean = true): Float {
-        return compareSimilarity(chineseStr2Pinyin(str1), chineseStr2Pinyin(str2), ignoreCase)
+    fun compareSimilarityWithPinyin(context: Context, str1: String, str2: String, ignoreCase: Boolean = true): Float {
+        val t = TextTransHelper(context)
+        return compareSimilarity(t.chineseStr2Pinyin(str1), t.chineseStr2Pinyin(str2), ignoreCase)
     }
 
     /**

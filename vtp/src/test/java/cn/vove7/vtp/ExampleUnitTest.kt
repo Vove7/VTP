@@ -15,46 +15,6 @@ class ExampleUnitTest {
         assertEquals(4, (2 + 2).toLong())
     }
 
-    @Test
-    fun transformWords2Chinese() {
-        val wws = arrayOf(
-                "你好",
-                "刘学他",
-                "刘薛涛",
-                "刘xuetao"
-        )
-        wws.forEach {
-            println(TextHelper.chineseStr2Pinyin(it))
-        }
-    }
-
-    @Test
-    fun compareSimilarityTest() {
-        val tests = hashMapOf(
-                Pair("刘雪", "刘雪ta"),
-                Pair("你好", "您好"),
-                Pair("Qq", "qq"),
-                Pair("点击RUN", "RUN")
-
-
-        )
-        tests.forEach {
-            println("""${it.key} ${it.value}""")
-            println(TextHelper.compareSimilarityWithPinyin(it.key, it.value))
-            println()
-        }
-    }
-
-    @Test
-    fun testChinese2First() {
-        arrayOf(
-                "一二三",
-                "i我和欧文h",
-                "吗朦胧"
-        ).forEach {
-            println(TextHelper.chineseStr2Pinyin(it,true))
-        }
-    }
 
 
 }

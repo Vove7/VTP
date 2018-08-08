@@ -1,15 +1,29 @@
 package cn.vove7.vtpdemo
 
+import android.app.Activity
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import cn.vove7.vtp.text.TextTransHelper
 import cn.vove7.vtp.view.popup.PopupHelper
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val p = TextTransHelper(this)
+        arrayOf(
+                "啊啊啊",
+                "哈哈哈卡卡哪里n",
+                "测试欸了鳄梨i；"
+        ).forEach {
+            val r = p.chineseStr2Pinyin(it, true)
+            trans.append(r + '\n')
+            Log.d("Debug :", "onCreate  ----> $r")
+        }
+
 
         btn.setOnClickListener {
             PopupHelper.createTooltipAndShow(this, "125165163", it, 3000)
