@@ -29,6 +29,7 @@ object Vog {
     private lateinit var logFle: File
     var MAX_LOG_FILE_SIZE = (1 shl 20).toLong()//1M
 
+    // TODO send2Server
     fun send2Server(msg: String) {
 
     }
@@ -90,7 +91,7 @@ object Vog {
     val dateFormat = SimpleDateFormat("MM-dd hh-mm-ss", Locale.CHINA)
     private fun println(priority: Int, tag: String, msg: String) {
         if (output_level <= priority) {
-            Log.println(priority,"Vog: $tag" , msg + '\n')
+            Log.println(priority, "Vog: $tag", msg + '\n')
         }
         if (log2Local && localLogLevel <= priority) {
             val date = dateFormat.format(Date(System.currentTimeMillis()))
@@ -112,8 +113,8 @@ object Vog {
         var size = 0L
         File(logPath)
                 .walk()
-                .filter { it.extension == "log" }
                 .filter { it.isFile }
+                .filter { it.extension == "log" }
                 .filter { it.name.startsWith("app") }
                 .forEach {
                     if (it.lastModified() > latestTime) {

@@ -1,9 +1,12 @@
 package cn.vove7.vtp.activity
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.util.DisplayMetrics
+
 
 /**
  * # ActivityHelper
@@ -35,7 +38,15 @@ object ActivityHelper {
         val bm = Bitmap.createBitmap(view.drawingCache, 0, statusbarHeight, w, h - statusbarHeight)
         view.setWillNotCacheDrawing(true)
         return bm
+    }
 
-
+    /**
+     * 检测activity是否在栈顶
+     */
+    fun isForeground(context: Context, activity: Class<*>): Boolean {
+        val myManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        val task = myManager.getRunningTasks(1)
+        val componentInfo = task[0].topActivity
+        return componentInfo.packageName == activity::class.java.name
     }
 }

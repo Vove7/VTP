@@ -1,5 +1,12 @@
 # Update Log
 
+- 2018-8-9
+  - add pkg `calendar`
+  - add `CalendarAccount`,`CalendarHelper`
+  - add `ServiceHelper.isServiceRunning`
+  - add `ActivityHelper.isForeground`
+  
+ 
 - 2018-8-8
   - fix `TextTransHelper.chineseStr2Pinyin`
 

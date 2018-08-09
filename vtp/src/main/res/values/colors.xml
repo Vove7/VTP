@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="default_text_color">#636363</color>
+
+    <color name="teal_A700">#00BFA5</color>
+    <color name="brown_800">#4E342E</color>
+    <color name="orange_A700">#FF6D00</color>
+    <color name="deep_purple_A700">#6200EA</color>
+    <color name="pink_A400">#F50057</color>
+    <color name="red_500">#F44336</color>
+    <color name="deep_purple_700">#512DA8</color>
+    <color name="blue_500">#2196F3</color>
+    <color name="light_blue_500">#03A9F4</color>
+    <color name="cyan_500">#00BCD4</color>
+    <color name="green_700">#388E3C</color>
+    <color name="light_green_500">#8BC34A</color>
+    <color name="lime_600">#C0CA33</color>
+    <color name="yellow_A400">#FFEA00</color>
+    <color name="amber_500">#FFC107</color>
+    <color name="orange_700">#F57C00</color>
+    <color name="deep_orange_A400">#FF3D00</color>
+    <color name="blue_grey_500">#607D8B</color>
 </resources>
