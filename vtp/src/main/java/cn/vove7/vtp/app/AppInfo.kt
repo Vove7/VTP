@@ -10,6 +10,8 @@ open class AppInfo(
         var alias: String = name,
         var packageName: String = "",
         var icon: Drawable? = null,
+        var versionName: String = "",
+        var versionCode: Int = 0,
         var pid: Int = 0,
         var priority: Int = 0
 ) {

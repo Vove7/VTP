@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
 
+
 /**
  *
  *
@@ -23,16 +24,22 @@ object AppHelper {
         context.startActivity(intent)
     }
 
+    /**
+     * 根据App name 或者 pkg获取AppInfo
+     */
     fun getAppInfo(context: Context, name: String, pkg: String): AppInfo? {
         val man = context.packageManager
-        val list = man.getInstalledApplications(0)
+        val list = man.getInstalledPackages(0)
         for (app in list) {
-            val appName = app.loadLabel(man).toString()
+            val appName = app.applicationInfo.loadLabel(man).toString()
+
             if (name == appName || pkg == app.packageName) {
                 return AppInfo(
                         name = appName,
                         packageName = app.packageName,
-                        icon = app.loadIcon(man)
+                        icon = app.applicationInfo.loadIcon(man),
+                        versionName = app.versionName,
+                        versionCode = app.versionCode
                 )
             }
         }
@@ -41,18 +48,53 @@ object AppHelper {
 
     /**
      * 获取所有已安装
+     * @param includeSelf 是否包含自己
      */
-    fun getAllInstallApp(context: Context): List<AppInfo> {
+    fun getAllInstallApp(context: Context, includeSelf: Boolean = true): List<AppInfo> {
         val man = context.packageManager
-        val list = man.getInstalledApplications(0)
+        val list = man.getInstalledPackages(0)
         val appList = mutableListOf<AppInfo>()
         for (app in list) {
-            val name = app.loadLabel(man).toString()
+            val name = app.applicationInfo.loadLabel(man).toString()
+            if (app.packageName == context.packageName && includeSelf) {
+                continue
+            }
             appList.add(AppInfo(
                     name = name,
                     packageName = app.packageName,
-                    icon = app.loadIcon(man)
+                    icon = app.applicationInfo.loadIcon(man),
+                    versionName = app.versionName,
+                    versionCode = app.versionCode
             ))
+        }
+        return appList
+    }
+
+    /**
+     * 获取所有可启动的App信息
+     * @param includeSelf 是否包含自己
+     */
+    fun getAllLaunchableApp(context: Context, includeSelf: Boolean = true): List<AppInfo> {
+        val appList = mutableListOf<AppInfo>()
+
+        val pm = context.packageManager
+        val mainIntent = Intent(Intent.ACTION_MAIN, null)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+        val mResolveInfo = pm.queryIntentActivities(mainIntent, 0)
+        for (info in mResolveInfo) {
+            val packName = info.activityInfo.packageName
+            if (packName == context.packageName && includeSelf) {
+                continue
+            }
+            val pkgInfo=pm.getPackageInfo(packName,0)
+            val mInfo = AppInfo(
+                    info.activityInfo.applicationInfo.loadLabel(pm).toString(),
+                    packageName = packName,
+                    icon = info.activityInfo.applicationInfo.loadIcon(pm),
+                    versionCode = pkgInfo.versionCode,
+                    versionName = pkgInfo.versionName
+            )
+            appList.add(mInfo)
         }
         return appList
     }

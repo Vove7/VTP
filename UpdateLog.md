@@ -1,5 +1,10 @@
 # Update Log
 
+- 2018-8-11
+  - add `AppInfo(versionName,versionCode)`
+  - modify `minSdkVersion 19`
+
+
 - 2018-8-9
   - add pkg `calendar`
   - add `CalendarAccount`,`CalendarHelper`

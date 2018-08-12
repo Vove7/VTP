@@ -24,13 +24,15 @@ object ContactHelper {
      * 获取联系人列表
      * <uses-permission android:name="android.permission.READ_CONTACTS"/>
      */
+    //TODO fix huawei
     fun getAllContacts(context: Context): HashMap<String, ContactInfo> {
+        val list = hashMapOf<String, ContactInfo>()
         if (!PermissionUtils.isAllGranted(context, requirePermissions)) {
             PermissionUtils.autoRequestPermission(context, requirePermissions)
+            return list
         }
         val contactUri = ContactsContract.Contacts.CONTENT_URI
         val cursor = context.contentResolver.query(contactUri, contactProjection, null, null, null)
-        val list = hashMapOf<String, ContactInfo>()
         with(cursor) {
             if (cursor.moveToFirst()) {
                 do {
@@ -39,8 +41,7 @@ object ContactHelper {
                     val name = cursor.getString(1)
 
                     val phonesCursor = context.contentResolver.query(
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                            phoneProjection,
+                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI, phoneProjection,
                             ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + id, null, null)
 
                     val phoneList = mutableListOf<String>()
@@ -51,8 +52,10 @@ object ContactHelper {
                                 phoneList.add(num.replace(" ",""))
                             } while (phonesCursor.moveToNext())
                         }
+                        list[name] = ContactInfo(name, phoneList).also {
+                            Vog.v(this,"getAllContacts $it")
+                        }
                     }
-                    list[name] = ContactInfo(name, phoneList)
                 } while (cursor!!.moveToNext())
             } else {
                 Vog.d(this, "联系人 moveToFirst failed")
