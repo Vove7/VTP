@@ -10,7 +10,7 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
 /**
  * # TextTransHelper
  *
- * @author 17719
+ * @author Vove
  * 2018/8/8
  */
 class TextTransHelper(val context: Context) {

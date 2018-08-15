@@ -1,5 +1,13 @@
 # Update Log
 
+- 2018-8-15
+  - add `SystemHelper.getDeviceInfo`
+  - add `SystemHelper.getScreenInfo`
+  - add `SystemHelper.getIMEI`
+  - rename `SpUtils` -> `SpHelper`
+  - add `BundleBuilder`
+  - add `ReflectHelper`
+
 - 2018-8-11
   - add `AppInfo(versionName,versionCode)`
   - modify `minSdkVersion 19`
