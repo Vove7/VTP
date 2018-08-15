@@ -12,7 +12,7 @@ import java.util.*
  */
 data class DeviceInfo(
         var IMEI: String? = null,//IMEI
-        var screenSInfo: ScreenInfo?,//屏幕信息
+        var screenInfo: ScreenInfo?,//屏幕信息
         var manufacturerName: String,//厂商名
         var productName: String,//产品名
         var brandName: String,//品牌
