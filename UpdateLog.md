@@ -1,5 +1,10 @@
 # Update Log
 
+- 2018-8-16
+  - rename `SpHelper.setValue` -> `SpHelper.set`
+  - add `SetBuilder`
+  - add `ListBuilder`
+
 - 2018-8-15
   - add `SystemHelper.getDeviceInfo`
   - add `SystemHelper.getScreenInfo`

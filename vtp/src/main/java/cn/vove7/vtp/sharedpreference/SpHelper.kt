@@ -5,7 +5,6 @@ import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 import android.preference.PreferenceManager
 import android.support.annotation.StringRes
-import cn.vove7.vtp.log.Vog
 
 
 class SpHelper {
@@ -65,11 +64,15 @@ class SpHelper {
         return preferences.getStringSet(s(keyId), null)
     }
 
-    fun setValue(@StringRes keyId: Int, value: Any) {
-        setValue(s(keyId), value)
+    /**
+     *
+     * @param keyId @StringRes keyId
+     */
+    fun set(@StringRes keyId: Int, value: Any) {
+        set(s(keyId), value)
     }
 
-    private fun setValue(key: String, value: Any) {
+    fun set(key: String, value: Any) {
         val editor = preferences.edit()
         when (value) {
             is Boolean -> editor.putBoolean(key, value)
@@ -78,7 +81,7 @@ class SpHelper {
             is Float -> editor.putFloat(key, value)
             is String -> editor.putString(key, value)
             is Set<*> -> editor.putStringSet(key, value as Set<String>)
-            else -> Vog.e(this, "设置值类型出错 key: $key")
+            else -> throw Exception("值类型不支持 : ${value::class.java.name}")
         }
         editor.apply()
     }
