@@ -44,7 +44,14 @@ class SpHelper {
      * @return null when have no this keyValue
      */
     fun getString(@StringRes keyId: Int): String? {
-        return preferences.getString(s(keyId), null)
+        return getString(s(keyId))
+    }
+    /**
+     * @param key key
+     * @return null when have no this keyValue
+     */
+    fun getString(key: String): String? {
+        return preferences.getString(key, null)
     }
 
     /**
@@ -52,7 +59,14 @@ class SpHelper {
      * @return false when have no this keyValue
      */
     fun getBoolean(@StringRes keyId: Int): Boolean {
-        return preferences.getBoolean(s(keyId), false)
+        return getBoolean(s(keyId))
+    }
+    /**
+     * @param key key
+     * @return false when have no this keyValue
+     */
+    fun getBoolean(key: String): Boolean {
+        return preferences.getBoolean(key, false)
     }
 
     /**
@@ -61,7 +75,15 @@ class SpHelper {
      * @return if exists Set<String> ,else null
      */
     fun getStringSet(@StringRes keyId: Int): Set<String>? {
-        return preferences.getStringSet(s(keyId), null)
+        return getStringSet(s(keyId))
+    }
+    /**
+     *
+     * @param key key
+     * @return if exists Set<String> ,else null
+     */
+    fun getStringSet(key: String): Set<String>? {
+        return preferences.getStringSet(key, null)
     }
 
     /**
