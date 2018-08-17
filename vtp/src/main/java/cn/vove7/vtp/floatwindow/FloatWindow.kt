@@ -77,7 +77,7 @@ abstract class AbFloatWindow<VH : AbFloatWindow.ViewHolder>(
         params.x = x
         params.y = y
 
-        mParams?.type = if (Build.VERSION.SDK_INT >= 26)
+        params.type = if (Build.VERSION.SDK_INT >= 26)
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
         else WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
         return params
