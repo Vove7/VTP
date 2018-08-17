@@ -1,11 +1,7 @@
 package cn.vove7.vtp
 
-import android.app.Activity
-import android.content.Intent
-import cn.vove7.vtp.service.ServiceHelper
 import org.junit.Assert.assertEquals
 import org.junit.Test
-import kotlin.reflect.KClass
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -21,5 +17,12 @@ class ExampleUnitTest {
     @Test
     fun className() {
         println(ExampleUnitTest::class.java.name)
+    }
+
+    @Test
+    fun double2Float() {
+        val f = 1.111
+        println(f.toFloat())
+
     }
 }

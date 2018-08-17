@@ -152,6 +152,7 @@ class SpHelper {
             is Int -> editor.putInt(key, value)
             is Long -> editor.putLong(key, value)
             is Float -> editor.putFloat(key, value)
+            is Double -> editor.putFloat(key, value.toFloat())
             is String -> editor.putString(key, value)
             is Set<*> -> editor.putStringSet(key, value as Set<String>)
             else -> throw Exception("值类型不支持 : ${value::class.java.name}")
