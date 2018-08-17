@@ -46,6 +46,7 @@ class SpHelper {
     fun getString(@StringRes keyId: Int): String? {
         return getString(s(keyId))
     }
+
     /**
      * @param key key
      * @return null when have no this keyValue
@@ -56,11 +57,60 @@ class SpHelper {
 
     /**
      * @param keyId @StringRes keyId
+     * @return null when have no this keyValue
+     */
+    fun getInt(@StringRes keyId: Int): Int {
+        return getInt(s(keyId))
+    }
+
+    /**
+     * @param key key
+     * @return null when have no this keyValue
+     */
+    fun getInt(key: String): Int {
+        return preferences.getInt(key, -1)
+    }
+
+    /**
+     * @param keyId @StringRes keyId
+     * @return null when have no this keyValue
+     */
+    fun getLong(@StringRes keyId: Int): Long {
+        return getLong(s(keyId))
+    }
+
+    /**
+     * @param key key
+     * @return null when have no this keyValue
+     */
+    fun getLong(key: String): Long {
+        return preferences.getLong(key, -1L)
+    }
+
+    /**
+     * @param keyId @StringRes keyId
+     * @return null when have no this keyValue
+     */
+    fun getFloat(@StringRes keyId: Int): Float {
+        return getFloat(s(keyId))
+    }
+
+    /**
+     * @param key key
+     * @return null when have no this keyValue
+     */
+    fun getFloat(key: String): Float {
+        return preferences.getFloat(key, -1.0f)
+    }
+
+    /**
+     * @param keyId @StringRes keyId
      * @return false when have no this keyValue
      */
     fun getBoolean(@StringRes keyId: Int): Boolean {
         return getBoolean(s(keyId))
     }
+
     /**
      * @param key key
      * @return false when have no this keyValue
@@ -77,6 +127,7 @@ class SpHelper {
     fun getStringSet(@StringRes keyId: Int): Set<String>? {
         return getStringSet(s(keyId))
     }
+
     /**
      *
      * @param key key

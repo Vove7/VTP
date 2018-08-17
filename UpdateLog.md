@@ -1,5 +1,10 @@
 # Update Log
 
+- 2018-8-17
+  - add `SpHelper.getInt`
+  - add `SpHelper.getLong`
+  - add `SpHelper.getFloat`
+  
 - 2018-8-16
   - rename `SpHelper.setValue` -> `SpHelper.set`
   - add `SetBuilder`
