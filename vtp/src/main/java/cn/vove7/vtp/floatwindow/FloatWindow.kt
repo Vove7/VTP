@@ -12,15 +12,16 @@ import cn.vove7.vtp.log.Vog
 
 /**
  * 悬浮窗
+ * 需权限
  *
  * Created by Vove on 2018/7/1
  */
 abstract class AbFloatWindow<VH : AbFloatWindow.ViewHolder>(
         val context: Context,
-        var mParams: WindowManager.LayoutParams? = null,
-        var posX: Int = 0,
-        var posY: Int = 0
-) {
+        var mParams: WindowManager.LayoutParams? = null
+        ) {
+    open var posX: Int = 0
+    open var posY: Int = 0
     val contentView: View
     var windowManager: WindowManager = context.applicationContext.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     var holder: VH

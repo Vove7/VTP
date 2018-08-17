@@ -4,7 +4,8 @@
   - add `SpHelper.getInt`
   - add `SpHelper.getLong`
   - add `SpHelper.getFloat`
-  
+  - update `AbFloatWindow`
+   
 - 2018-8-16
   - rename `SpHelper.setValue` -> `SpHelper.set`
   - add `SetBuilder`
