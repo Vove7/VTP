@@ -29,12 +29,6 @@ abstract class AbFloatWindow<VH : AbFloatWindow.ViewHolder>(
     init {
         val size = Point()
         windowManager.defaultDisplay.getSize(size)
-        if (mParams == null) mParams = buildLayoutParams()
-
-        mParams?.type = if (Build.VERSION.SDK_INT >= 26)
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        else WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
-
         contentView = LayoutInflater.from(context).inflate(this.layoutResId(), null)
         holder = this.onCreateViewHolder(contentView)
     }
@@ -50,6 +44,7 @@ abstract class AbFloatWindow<VH : AbFloatWindow.ViewHolder>(
     abstract fun layoutResId(): Int
 
     open fun show() {
+        if (mParams == null) mParams = buildLayoutParams()
         try {
             windowManager.addView(contentView, mParams)
         } catch (e: Exception) {
@@ -68,7 +63,7 @@ abstract class AbFloatWindow<VH : AbFloatWindow.ViewHolder>(
         windowManager.updateViewLayout(contentView, buildLayoutParams(x, y))
     }
 
-    private fun buildLayoutParams(x: Int = posX, y: Int = posY): WindowManager.LayoutParams {
+    fun buildLayoutParams(x: Int = posX, y: Int = posY): WindowManager.LayoutParams {
         val params = WindowManager.LayoutParams()
         params.packageName = context.packageName
         params.width = WindowManager.LayoutParams.WRAP_CONTENT
@@ -81,6 +76,10 @@ abstract class AbFloatWindow<VH : AbFloatWindow.ViewHolder>(
         params.gravity = Gravity.TOP or Gravity.START
         params.x = x
         params.y = y
+
+        mParams?.type = if (Build.VERSION.SDK_INT >= 26)
+            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+        else WindowManager.LayoutParams.TYPE_SYSTEM_ALERT
         return params
     }
 
