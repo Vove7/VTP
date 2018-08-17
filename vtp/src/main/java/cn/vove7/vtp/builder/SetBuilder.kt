@@ -13,7 +13,7 @@ class SetBuilder {
         return this
     }
 
-    fun allAll(s: Array<Any>): SetBuilder {
+    fun addAll(s: Array<Any>): SetBuilder {
         set.addAll(s)
         return this
     }

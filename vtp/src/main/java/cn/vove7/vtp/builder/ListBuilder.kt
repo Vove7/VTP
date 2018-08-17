@@ -13,7 +13,7 @@ class ListBuilder {
         return this
     }
 
-    fun allAll(s: Array<Any>): ListBuilder {
+    fun addAll(s: Array<Any>): ListBuilder {
         list.addAll(s)
         return this
     }
