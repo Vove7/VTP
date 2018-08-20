@@ -1,5 +1,8 @@
 # Update Log
 
+- 2018-8-21
+  - modify type of `AppHelper.versionName` from `String` to `String?`
+
 - 2018-8-17
   - add `SpHelper.getInt`
   - add `SpHelper.getLong`

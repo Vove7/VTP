@@ -86,9 +86,9 @@ object AppHelper {
             if (packName == context.packageName && includeSelf) {
                 continue
             }
-            val pkgInfo=pm.getPackageInfo(packName,0)
+            val pkgInfo = pm.getPackageInfo(packName, 0)
             val mInfo = AppInfo(
-                    info.activityInfo.applicationInfo.loadLabel(pm).toString(),
+                    name = info.activityInfo.applicationInfo.loadLabel(pm).toString(),
                     packageName = packName,
                     icon = info.activityInfo.applicationInfo.loadIcon(pm),
                     versionCode = pkgInfo.versionCode,
