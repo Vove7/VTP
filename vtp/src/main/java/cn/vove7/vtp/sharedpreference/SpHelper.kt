@@ -107,16 +107,16 @@ class SpHelper {
      * @param keyId @StringRes keyId
      * @return false when have no this keyValue
      */
-    fun getBoolean(@StringRes keyId: Int): Boolean {
-        return getBoolean(s(keyId))
+    fun getBoolean(@StringRes keyId: Int, default: Boolean = false): Boolean {
+        return getBoolean(s(keyId), default)
     }
 
     /**
      * @param key key
      * @return false when have no this keyValue
      */
-    fun getBoolean(key: String): Boolean {
-        return preferences.getBoolean(key, false)
+    fun getBoolean(key: String, default: Boolean = false): Boolean {
+        return preferences.getBoolean(key, default)
     }
 
     /**

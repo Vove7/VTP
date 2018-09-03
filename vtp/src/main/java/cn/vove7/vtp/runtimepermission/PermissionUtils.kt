@@ -43,6 +43,7 @@ object PermissionUtils {
      */
     fun gotoAccessibilitySetting(context: Context) {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 

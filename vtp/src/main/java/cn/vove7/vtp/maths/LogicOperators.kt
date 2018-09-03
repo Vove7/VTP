@@ -19,12 +19,9 @@ object LogicOperators {
      *
      */
     fun orEquals(s: Any, arr: Array<Any>, eq: Boolean = true): Boolean {
-        arr.forEach {
-            when (eq) {
-                true -> if (it != s) return true
-                false -> if (it == s) return true
-            }
-        }
-        return true
+        val b=arr.contains(s)
+        return if(eq) b
+        else !b
     }
+
 }
