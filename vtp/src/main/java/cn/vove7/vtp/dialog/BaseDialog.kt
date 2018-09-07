@@ -4,6 +4,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.support.annotation.DrawableRes
 import android.support.annotation.StringRes
 import android.util.DisplayMetrics
@@ -90,7 +91,10 @@ open class BaseDialog(context: Context) : Dialog(context), DialogInterface {
      * 设置Title左边的Icon
      */
     fun setIcon(@DrawableRes drawableId: Int): BaseDialog {
-        setIcon(context.getDrawable(drawableId))
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setIcon(context.resources.getDrawable(drawableId, null))
+        }else
+            setIcon(context.resources.getDrawable(drawableId))
         return this
     }
 
@@ -148,7 +152,7 @@ open class BaseDialog(context: Context) : Dialog(context), DialogInterface {
         }
         onSetHeight()
         onSetWidth()
-        findViewById<TextView>(android.R.id.title).visibility = View.GONE
+        findViewById<TextView>(android.R.id.title)?.visibility = View.GONE
         window!!.setGravity(gravity)
     }
 
