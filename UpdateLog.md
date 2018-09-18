@@ -1,5 +1,9 @@
 # Update Log
 
+- 2018-9-18
+  - add `SpHelper.containsKey`
+  - add `SpHelper.removeKey`
+
 - 2018-8-21
   - modify type of `AppHelper.versionName` from `String` to `String?`
 

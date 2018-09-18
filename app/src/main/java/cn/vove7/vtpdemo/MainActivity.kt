@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import cn.vove7.vtp.contact.ContactHelper
 import cn.vove7.vtp.text.TextTransHelper
+import cn.vove7.vtp.toast.Voast
 import cn.vove7.vtp.view.popup.PopupHelper
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlin.concurrent.thread
@@ -31,6 +32,8 @@ class MainActivity : Activity() {
 
         btn.setOnClickListener {
             PopupHelper.createTooltipAndShow(this, "125165163", it, 3000)
+
+            Voast.with(this).top().show("12345678")
         }
     }
 }

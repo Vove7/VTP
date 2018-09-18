@@ -14,7 +14,7 @@ class SpHelper {
      * 存储文件名
      */
     private var spName: String? = null
-    private lateinit var preferences: SharedPreferences
+    lateinit var preferences: SharedPreferences
 
     constructor(context: Context) {
         this.context = context
@@ -159,4 +159,13 @@ class SpHelper {
         }
         editor.apply()
     }
+
+    fun containsKey(key: String): Boolean = preferences.contains(key)
+
+    fun containsKey(@StringRes keyId: Int): Boolean = containsKey(s(keyId))
+
+    fun removeKey(key: String){
+        preferences.edit().remove(key).apply()
+    }
+    fun removeKey(@StringRes keyId: Int) = removeKey(s(keyId))
 }
