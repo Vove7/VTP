@@ -110,13 +110,13 @@ class CalendarHelper(private val context: Context, private val account: Calendar
         return if (result != null) ContentUris.parseId(result).also { account.id = it } else -1
     }
 
-    fun addCalendarEvent(calendarId: Long, title: String, description: String, beginTime: Long, endTime: Long, isAlarm: Boolean): Int {
+    fun addCalendarEvent(title: String, description: String, beginTime: Long, endTime: Long, isAlarm: Boolean): Int {
 
         val event = ContentValues()
         event.put("title", title)
         event.put("description", description)
         // 插入账户的id
-        event.put("calendar_id", calendarId)
+        event.put("calendar_id", account.id)
 
         event.put(CalendarContract.Events.DTSTART, beginTime + 10000)
         event.put(CalendarContract.Events.DTEND, endTime)

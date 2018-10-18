@@ -21,7 +21,7 @@ abstract class BaseListAdapter<VH : BaseListAdapter.ViewHolder, DataType>(
     /**
      * @return your layout
      */
-    protected abstract fun layoutId(): Int
+    protected abstract fun layoutId(position:Int): Int
 
     /**
      * Init your item contentView with a holder
@@ -34,7 +34,7 @@ abstract class BaseListAdapter<VH : BaseListAdapter.ViewHolder, DataType>(
         var view = convertView
         val holder: VH
         if (view == null) {
-            view = inflater.inflate(layoutId(), null)
+            view = inflater.inflate(layoutId(position), null)
             holder = onCreateViewHolder(view)
             view?.tag = holder
         } else holder = view.tag as VH

@@ -37,8 +37,9 @@ object AppHelper {
                 return AppInfo(
                         name = appName,
                         packageName = app.packageName,
-                        icon = app.applicationInfo.loadIcon(man),
+//                        icon = app.applicationInfo.loadIcon(man),
                         versionName = app.versionName,
+                        packageInfo = app,
                         versionCode = app.versionCode
                 )
             }
@@ -62,8 +63,9 @@ object AppHelper {
             appList.add(AppInfo(
                     name = name,
                     packageName = app.packageName,
-                    icon = app.applicationInfo.loadIcon(man),
+//                    icon = app.applicationInfo.loadIcon(man),
                     versionName = app.versionName,
+                    packageInfo = app,
                     versionCode = app.versionCode
             ))
         }
@@ -90,8 +92,9 @@ object AppHelper {
             val mInfo = AppInfo(
                     name = info.activityInfo.applicationInfo.loadLabel(pm).toString(),
                     packageName = packName,
-                    icon = info.activityInfo.applicationInfo.loadIcon(pm),
+//                    icon = info.activityInfo.applicationInfo.loadIcon(pm),
                     versionCode = pkgInfo.versionCode,
+                    packageInfo = pkgInfo,
                     versionName = pkgInfo.versionName
             )
             appList.add(mInfo)

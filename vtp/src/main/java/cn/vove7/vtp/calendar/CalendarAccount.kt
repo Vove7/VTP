@@ -29,9 +29,17 @@ class CalendarAccount(
         /**
          * CalendarContract.Calendars._ID
          */
-        var id: Long? = null
-
+        var id: Long? = null,
+        /**
+         * 自动创建时所需的context
+         */
+        autoCreateContext: Context? = null
 ) {
+    init {
+        if (autoCreateContext != null)
+            initIfNonExists(autoCreateContext)
+    }
+
     /**
      * 初始化CalendarAccount id.
      * 不存在则添加进账户

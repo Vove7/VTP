@@ -28,10 +28,15 @@ object SystemHelper {
      * 获取剪切板数据
      * @return ClipData
      */
-
     fun getClipData(context: Context): ClipData {
         val cs = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         return cs.primaryClip
+    }
+
+    fun saveToClipBoard(context: Context, text: String) {
+        val cm = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        val mClipData = ClipData.newPlainText("", text)
+        cm.primaryClip = mClipData
     }
 
     /**
