@@ -10,12 +10,34 @@ import android.content.Context
  */
 object TextHelper {
 
+    fun replaceNumber(s: String): String {
+        var sss = s
+        mapOf(
+                Pair("1", "yi"), Pair("2", "er"),
+                Pair("3", "san"), Pair("4", "si"),
+                Pair("5", "wu"), Pair("6", "liu"),
+                Pair("7", "qi"), Pair("8", "ba"),
+                Pair("9", "jiu"), Pair("0", "lin"),
+                Pair("+", "jia")
+        ).forEach {
+            sss = sss.replace(it.key, it.value)
+        }
+        return sss
+    }
+
     /**
      * 汉字转拼音再比较相似度
      */
-    fun compareSimilarityWithPinyin(context: Context, str1: String, str2: String, ignoreCase: Boolean = true): Float {
+    fun compareSimilarityWithPinyin(context: Context, str1: String, str2: String,
+                                    ignoreCase: Boolean = true, replaceNumberWithPinyin: Boolean = false): Float {
         val t = TextTransHelper(context)
-        return compareSimilarity(t.chineseStr2Pinyin(str1), t.chineseStr2Pinyin(str2), ignoreCase)
+        var s1 = str1
+        var s2 = str2
+        if (replaceNumberWithPinyin) {
+            s1 = replaceNumber(str1)
+            s2 = replaceNumber(str2)
+        }
+        return compareSimilarity(t.chineseStr2Pinyin(s1), t.chineseStr2Pinyin(s2), ignoreCase)
     }
 
     /**
