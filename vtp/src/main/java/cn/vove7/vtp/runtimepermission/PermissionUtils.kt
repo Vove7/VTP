@@ -12,9 +12,7 @@ import android.os.Build
 import android.provider.Settings
 import android.support.annotation.RequiresApi
 import android.support.v4.app.ActivityCompat
-import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.accessibility.AccessibilityManager
 import cn.vove7.vtp.log.Vog
 
@@ -23,18 +21,19 @@ object PermissionUtils {
 
     /**
      * @return 无障碍服务是否开启
+     *
+     * 无障碍 info.id 格式 appId/serverName
      */
     fun accessibilityServiceEnabled(context: Context): Boolean {
         val pkg = context.packageName
         val am = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
         val enabledAccessibilityServiceList = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC)
         for (info in enabledAccessibilityServiceList) {
-            Log.d("#########", "all -->" + info.id)
-            if (info.id.contains(pkg)) {
+            Vog.v(this, "accessibilityServiceEnabled ---> ${info.id}")
+            if (info.id.startsWith("$pkg/"))
                 return true
-            }
-        }
 
+        }
         return false
     }
 
@@ -54,7 +53,7 @@ object PermissionUtils {
         val enable: Boolean
         val packageName = context.packageName
         val flat = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")
-        Vog.v(this, "flat-" + flat!!)
+        Vog.v(this, "flat - $flat")
         enable = flat.contains(packageName)
         return enable
     }
@@ -62,26 +61,20 @@ object PermissionUtils {
     /**
      * 跳转通知使用权限
      */
-    fun gotoNotificationAccessSetting(context: Context): Boolean {
-        try {
-            val intent = Intent("android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS")
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            context.startActivity(intent)
-            return true
-        } catch (e: ActivityNotFoundException) {
-            try {
-                val intent = Intent()
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    @Throws(ActivityNotFoundException::class)
+    fun gotoNotificationAccessSetting(context: Context) {
+        val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
+            Intent(Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS)
+        } else {
+            Intent().apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 val cn = ComponentName("com.android.settings", "com.android.settings.Settings\$NotificationAccessSettingsActivity")
-                intent.component = cn
-                intent.putExtra(":settings:show_fragment", "NotificationAccessSettings")
-                context.startActivity(intent)
-                return true
-            } catch (ex: Exception) {
-                ex.printStackTrace()
+                component = cn
+                putExtra(":settings:show_fragment", "NotificationAccessSettings")
             }
-            return false
         }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        context.startActivity(intent)
     }
 
     /**
@@ -97,14 +90,14 @@ object PermissionUtils {
      *  PackageManager.PERMISSION_DENIED 表示无权限。
      *
      */
-    fun autoRequestPermission(context: Context, permissions: Array<String>, requestCode: Int = 1): Boolean {
+    fun autoRequestPermission(activity: Activity, permissions: Array<String>, requestCode: Int = 1): Boolean {
         val noPermission = arrayListOf<String>()
         permissions.forEach {
-            if (ActivityCompat.checkSelfPermission(context, it) != PackageManager.PERMISSION_GRANTED)
+            if (ActivityCompat.checkSelfPermission(activity, it) != PackageManager.PERMISSION_GRANTED)
                 noPermission.add(it)
         }
         return if (noPermission.size > 0) {
-            ActivityCompat.requestPermissions(context as Activity, noPermission.toTypedArray(), requestCode)
+            ActivityCompat.requestPermissions(activity, noPermission.toTypedArray(), requestCode)
             false
         } else {
             true
@@ -150,7 +143,7 @@ object PermissionUtils {
     @RequiresApi(Build.VERSION_CODES.M)
     fun requestDrawOverlays(activity: Activity, reqCode: Int) {
         val intent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + activity.packageName))
-        startActivityForResult(activity, intent, reqCode, null)
+        activity.startActivityForResult(intent, reqCode, null)
     }
 
 
