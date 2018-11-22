@@ -3,6 +3,8 @@
 > - Vove's Tools Package
 > - Android个人开发工具包
 
+**[更新日志](UpdateLog.md)**
+
 ## Usage
 
 * Step 1. Add the JitPack repository to your build file

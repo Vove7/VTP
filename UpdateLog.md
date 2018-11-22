@@ -1,5 +1,10 @@
 # Update Log
 
+- 2018-11-22
+
+  - add `ReflectHelper.invokeMethod`
+  - add `KotlinReflectHelper` 反射调用kotlin类里Companion函数、object class函数
+
 - 2018-9-18
   - add `SpHelper.containsKey`
   - add `SpHelper.removeKey`
