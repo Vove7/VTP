@@ -1,5 +1,6 @@
 package cn.vove7.vtp.contact
 
+import android.app.Activity
 import android.content.Context
 import android.provider.ContactsContract
 import cn.vove7.vtp.log.Vog
@@ -28,7 +29,8 @@ object ContactHelper {
     fun getAllContacts(context: Context): HashMap<String, ContactInfo> {
         val list = hashMapOf<String, ContactInfo>()
         if (!PermissionUtils.isAllGranted(context, requirePermissions)) {
-            PermissionUtils.autoRequestPermission(context, requirePermissions)
+            if(context is Activity)
+                PermissionUtils.autoRequestPermission(context, requirePermissions)
             return list
         }
         val contactUri = ContactsContract.Contacts.CONTENT_URI
