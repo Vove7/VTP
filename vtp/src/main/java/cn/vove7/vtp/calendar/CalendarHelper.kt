@@ -110,7 +110,29 @@ class CalendarHelper(private val context: Context, private val account: Calendar
         return if (result != null) ContentUris.parseId(result).also { account.id = it } else -1
     }
 
-    fun addCalendarEvent(title: String, description: String, beginTime: Long, endTime: Long, isAlarm: Boolean): Int {
+    /**
+     * 添加日历事件
+     * @param title String 显示标题
+     * @param description String
+     * @param beginTime Long 开始时间 millis
+     * @param endTime Long 结束时间 millis
+     * @param isAlarm Boolean 是否提醒，默认10分钟
+     * @return Int 事件id
+     */
+    fun addCalendarEvent(title: String, description: String, beginTime: Long, endTime: Long, isAlarm: Boolean = false): Int {//提前提醒
+        return addCalendarEvent(title, description, beginTime, endTime, if (isAlarm) 10L else null)
+    }
+
+    /**
+     * 添加日历事件
+     * @param title String 显示标题
+     * @param description String
+     * @param beginTime Long 开始时间 millis
+     * @param endTime Long 结束时间 millis
+     * @param earlyAlarmMinute Long? 提前提醒时间 单位分钟 , if null 不提醒
+     * @return Int 事件id
+     */
+    fun addCalendarEvent(title: String, description: String, beginTime: Long, endTime: Long, earlyAlarmMinute: Long? = null): Int {//提前提醒
 
         val event = ContentValues()
         event.put("title", title)
@@ -120,7 +142,7 @@ class CalendarHelper(private val context: Context, private val account: Calendar
 
         event.put(CalendarContract.Events.DTSTART, beginTime + 10000)
         event.put(CalendarContract.Events.DTEND, endTime)
-        event.put(CalendarContract.Events.HAS_ALARM, if (isAlarm) 1 else 0) //设置有闹钟提醒
+        event.put(CalendarContract.Events.HAS_ALARM, if (earlyAlarmMinute != null) 1 else 0) //设置有闹钟提醒
         event.put(CalendarContract.Events.EVENT_COLOR, randomColor(context))
         event.put(CalendarContract.Events.EVENT_TIMEZONE, "Asia/Shanghai")  //这个是时区，必须有
         //添加事件
@@ -128,11 +150,11 @@ class CalendarHelper(private val context: Context, private val account: Calendar
             ?: // 添加日历事件失败直接返回
             return RESULT_ADD_FAILED
         //事件提醒的设定
-        if (isAlarm) {
+        if (earlyAlarmMinute != null) {
             val values = ContentValues()
             values.put(CalendarContract.Reminders.EVENT_ID, ContentUris.parseId(newEvent))
             // 提前10分钟有提醒
-            values.put(CalendarContract.Reminders.MINUTES, 10)
+            values.put(CalendarContract.Reminders.MINUTES, earlyAlarmMinute)
             values.put(CalendarContract.Reminders.METHOD, CalendarContract.Reminders.METHOD_ALERT)
             context.contentResolver.insert(Uri.parse(CALENDAR_REMINDER_URL), values)
                 ?: // 添加闹钟提醒失败直接返回
@@ -141,11 +163,21 @@ class CalendarHelper(private val context: Context, private val account: Calendar
         return RESULT_OK
     }
 
+    /**
+     * 根据事件id 删除事件
+     * @param eventId Long
+     * @return Boolean
+     */
     fun deleteEvent(eventId: Long): Boolean {
         val uri = ContentUris.withAppendedId(Uri.parse(CALENDAR_EVENT_URL), eventId)
         return 1 == context.contentResolver.delete(uri, null, null)
     }
 
+    /**
+     * 根据事件标题删除事件
+     * @param title String
+     * @return Boolean
+     */
     fun deleteEvent(title: String): Boolean {
         val eventCursor = context.contentResolver
                 .query(Uri.parse(CALENDAR_EVENT_URL), null, null, null, null)
@@ -155,7 +187,7 @@ class CalendarHelper(private val context: Context, private val account: Calendar
                 cursor.moveToFirst()
                 while (!cursor.isAfterLast) {
                     val eventTitle = cursor.getString(cursor.getColumnIndex("title"))
-                    if ("$title" == eventTitle) {
+                    if (title == eventTitle) {
                         val id = cursor.getInt(cursor.getColumnIndex(CalendarContract.Calendars._ID))//取得id
                         val deleteUri = ContentUris.withAppendedId(Uri.parse(CALENDAR_EVENT_URL), id.toLong())
                         val rows = context.contentResolver.delete(deleteUri, null, null)

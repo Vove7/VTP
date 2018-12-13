@@ -27,6 +27,7 @@ class CalendarAccount(
          */
         val timeZoneId: String = TimeZone.getDefault().id,
         /**
+         * 新建后自动生成
          * CalendarContract.Calendars._ID
          */
         var id: Long? = null,

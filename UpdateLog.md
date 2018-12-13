@@ -1,5 +1,9 @@
 # Update Log
 
+- 2018-12-23
+
+  - 日历事件可设置提前提醒时间CalendarHelper
+
 - 2018-11-22
 
   - add `ReflectHelper.invokeMethod`
