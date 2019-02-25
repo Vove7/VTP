@@ -34,14 +34,7 @@ object AppHelper {
             val appName = app.applicationInfo.loadLabel(man).toString()
 
             if (name == appName || pkg == app.packageName) {
-                return AppInfo(
-                        name = appName,
-                        packageName = app.packageName,
-//                        icon = app.applicationInfo.loadIcon(man),
-                        versionName = app.versionName,
-                        packageInfo = app,
-                        versionCode = app.versionCode
-                )
+                return AppInfo(packageName = app.packageName)
             }
         }
         return null
@@ -60,14 +53,7 @@ object AppHelper {
             if (app.packageName == context.packageName && includeSelf) {
                 continue
             }
-            appList.add(AppInfo(
-                    name = name,
-                    packageName = app.packageName,
-//                    icon = app.applicationInfo.loadIcon(man),
-                    versionName = app.versionName,
-                    packageInfo = app,
-                    versionCode = app.versionCode
-            ))
+            appList.add(AppInfo(app.packageName))
         }
         return appList
     }
@@ -89,14 +75,7 @@ object AppHelper {
                 continue
             }
             val pkgInfo = pm.getPackageInfo(packName, 0)
-            val mInfo = AppInfo(
-                    name = info.activityInfo.applicationInfo.loadLabel(pm).toString(),
-                    packageName = packName,
-//                    icon = info.activityInfo.applicationInfo.loadIcon(pm),
-                    versionCode = pkgInfo.versionCode,
-                    packageInfo = pkgInfo,
-                    versionName = pkgInfo.versionName
-            )
+            val mInfo = AppInfo(packageName = packName)
             appList.add(mInfo)
         }
         return appList

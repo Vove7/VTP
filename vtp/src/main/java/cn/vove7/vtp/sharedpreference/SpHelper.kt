@@ -164,8 +164,15 @@ class SpHelper {
 
     fun containsKey(@StringRes keyId: Int): Boolean = containsKey(s(keyId))
 
-    fun removeKey(key: String){
+    fun removeKey(key: String) {
         preferences.edit().remove(key).apply()
     }
+
     fun removeKey(@StringRes keyId: Int) = removeKey(s(keyId))
+
+    fun setStringNull(@StringRes keyId: Int) = setStringNull(s(keyId))
+    fun setStringNull(key: String) {
+        val editor = preferences.edit()
+        editor.putString(key, null).apply()
+    }
 }
