@@ -93,17 +93,16 @@ object Vog {
         get() =
             SimpleDateFormat("MM-dd hh-mm-ss", Locale.CHINA)
 
+    const val TAG = "VOG"
 
     private fun println(priority: Int, msg: String) {
-
-
         val pre = findCaller(3)?.let {
             (it.methodName + "(" + it.fileName +
                     ":" + it.lineNumber + ")")
         }
         if (output_level <= priority) {
             try {
-                Log.println(priority, "", "$pre  >> $msg\n")
+                Log.println(priority, TAG, "$pre  >> $msg\n")
             } catch (e: Exception) {
                 when (priority) {
                     Log.ERROR -> System.err.println("$pre  >> $msg")
