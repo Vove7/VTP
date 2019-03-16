@@ -29,7 +29,7 @@ object PermissionUtils {
         val am = context.getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
         val enabledAccessibilityServiceList = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_GENERIC)
         for (info in enabledAccessibilityServiceList) {
-            Vog.v(this, "accessibilityServiceEnabled ---> ${info.id}")
+            Vog.v(info.id)
             if (info.id.startsWith("$pkg/"))
                 return true
 
@@ -53,7 +53,7 @@ object PermissionUtils {
         val enable: Boolean
         val packageName = context.packageName
         val flat = Settings.Secure.getString(context.contentResolver, "enabled_notification_listeners")
-        Vog.v(this, "flat - $flat")
+        Vog.v( "flat - $flat")
         enable = flat.contains(packageName)
         return enable
     }

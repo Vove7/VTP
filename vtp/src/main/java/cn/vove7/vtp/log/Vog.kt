@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import java.io.File
 import java.nio.charset.Charset
+import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,7 +28,7 @@ object Vog {
     private var localLogLevel = Log.DEBUG
     private var logPath = ""
     private lateinit var logFle: File
-    var MAX_LOG_FILE_SIZE = (1 shl 20).toLong()//1M
+    private var MAX_LOG_FILE_SIZE = (1 shl 20).toLong()//1M
 
     // TODO send2Server
     fun send2Server(msg: String) {
@@ -60,42 +61,59 @@ object Vog {
         this.log2Local = false
     }
 
-    fun d(o: Any, msg: String) {
-        println(Log.DEBUG, o.javaClass.simpleName, msg.toString())
+    fun d(msg: Any?) {
+        println(Log.DEBUG, msg.toString())
     }
 
-    fun wtf(o: Any, msg: Any) {
-        println(Log.ERROR, o.javaClass.simpleName, msg.toString())
+    fun wtf(msg: Any?) {
+        println(Log.ERROR, msg.toString())
     }
 
-    fun v(o: Any, msg: Any) {
-        println(Log.VERBOSE, o.javaClass.simpleName, msg.toString())
+    fun v(msg: Any) {
+        println(Log.VERBOSE, msg.toString())
     }
 
-    fun i(o: Any, msg: Any) {
-        println(Log.INFO, o.javaClass.simpleName, msg.toString())
+    fun i(msg: Any) {
+        println(Log.INFO, msg.toString())
     }
 
-    fun w(o: Any, msg: Any) {
-        println(Log.WARN, o.javaClass.simpleName, msg.toString())
+    fun w(msg: Any) {
+        println(Log.WARN, msg.toString())
     }
 
-    fun e(o: Any, msg: Any) {
-        println(Log.ERROR, o.javaClass.simpleName, msg.toString())
+    fun e(msg: Any) {
+        println(Log.ERROR, msg.toString())
     }
 
-    fun a(o: Any, msg: Any) {
-        println(Log.ASSERT, o.javaClass.simpleName, msg.toString())
+    fun a(msg: Any) {
+        println(Log.ASSERT, msg.toString())
     }
 
-    val dateFormat = SimpleDateFormat("MM-dd hh-mm-ss", Locale.CHINA)
-    private fun println(priority: Int, tag: String, msg: String) {
+    private val dateFormat: DateFormat
+        get() =
+            SimpleDateFormat("MM-dd hh-mm-ss", Locale.CHINA)
+
+
+    private fun println(priority: Int, msg: String) {
+
+
+        val pre = findCaller(3)?.let {
+            (it.methodName + "(" + it.fileName +
+                    ":" + it.lineNumber + ")")
+        }
         if (output_level <= priority) {
-            Log.println(priority, "Vog: $tag", msg + '\n')
+            try {
+                Log.println(priority, "", "$pre  >> $msg\n")
+            } catch (e: Exception) {
+                when (priority) {
+                    Log.ERROR -> System.err.println("$pre  >> $msg")
+                    else -> println("$pre  >> $msg")
+                }
+            }
         }
         if (log2Local && localLogLevel <= priority) {
             val date = dateFormat.format(Date(System.currentTimeMillis()))
-            log2File("$date: $tag: $msg")
+            log2File("$date: $pre  >> $msg\n")
         }
     }
 
@@ -127,6 +145,29 @@ object Vog {
             latestName
         } else {//create new
             "app${System.currentTimeMillis() % 10000}.log"
+        }
+    }
+
+
+    private fun findCaller(upDepth: Int): StackTraceElement? {
+        // 获取堆栈信息
+        val callStack = Thread.currentThread().stackTrace
+        // 最原始被调用的堆栈信息
+        // 日志类名称
+        val logClassName = Vog::class.java.name
+        // 循环遍历到日志类标识
+        var i = 0
+        val len = callStack.size
+        while (i < len) {
+            if (logClassName == callStack[i].className)
+                break
+            i++
+        }
+        return try {
+            callStack[i + upDepth]
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
         }
     }
 

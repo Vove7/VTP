@@ -111,7 +111,7 @@ object PopupHelper {
 
         val x = ((target.left + target.right) / 2) - (contentView.width / 2)
         val y = target.top - contentView.height
-        Vog.d(this, "$x $y")
+       Vog.d( "$x $y")
         p.showAtLocation(target,Gravity.CENTER,0,0)
         if (delayMillis > 0) {
             delayHide(p, delayMillis)

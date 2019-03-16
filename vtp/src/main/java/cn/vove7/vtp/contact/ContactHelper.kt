@@ -55,15 +55,15 @@ object ContactHelper {
                             } while (phonesCursor.moveToNext())
                         }
                         list[name] = ContactInfo(name, phoneList).also {
-                            Vog.v(this,"getAllContacts $it")
+                            Vog.v(it)
                         }
                     }
                 } while (cursor!!.moveToNext())
             } else {
-                Vog.d(this, "联系人 moveToFirst failed")
+               Vog.d( "联系人 moveToFirst failed")
             }
         }
-        Vog.d(this, "联系人更新: ${list.size}")
+       Vog.d( "联系人更新: ${list.size}")
         return list
     }
 

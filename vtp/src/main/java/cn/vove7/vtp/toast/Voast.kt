@@ -113,7 +113,7 @@ class Voast(
 
     fun show(msg: String, d: Int = Toast.LENGTH_SHORT) {
         if (outDebug)
-            Vog.d(this, msg)
+           Vog.d( msg)
 
         voastHandler.sendMessage(voastHandler.buildVoastMessage(msg, d))
     }

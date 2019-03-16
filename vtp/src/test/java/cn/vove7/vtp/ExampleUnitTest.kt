@@ -1,5 +1,6 @@
 package cn.vove7.vtp
 
+import cn.vove7.vtp.log.Vog
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -23,6 +24,9 @@ class ExampleUnitTest {
     fun double2Float() {
         val f = 1.111
         println(f.toFloat())
+        Vog.d("debug")
+        Vog.e("wr")
+        Vog.i("wr")
 
     }
 }

@@ -224,7 +224,7 @@ class CalendarHelper(private val context: Context, private val account: Calendar
                     if (displayName == name) {
                         val id = cur.getLong(cur.getColumnIndex(CalendarContract.Calendars._ID))
                         val uri = ContentUris.withAppendedId(Uri.parse(CALENDAR_URL), id)
-                        Vog.d(this, "deleteAccountByName: $id $name")
+                       Vog.d( "$id $name")
                         return 1 == context.contentResolver.delete(uri, null, null)
                     }
                 }

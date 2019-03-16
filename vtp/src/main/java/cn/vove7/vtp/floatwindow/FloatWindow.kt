@@ -49,7 +49,7 @@ abstract class AbFloatWindow<VH : AbFloatWindow.ViewHolder>(
             windowManager.addView(contentView, mParams)
         } catch (e: Exception) {
             e.printStackTrace()
-            Vog.e(this, "无悬浮窗")
+            Vog.e( "无悬浮窗权限")
         }
     }
 

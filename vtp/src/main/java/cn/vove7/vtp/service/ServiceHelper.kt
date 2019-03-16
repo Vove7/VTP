@@ -22,7 +22,7 @@ object ServiceHelper {
                 .getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
         val runningService = manager.getRunningServices(Int.MAX_VALUE)
         runningService.forEach {
-            Vog.d(this, "isServiceRunning $it - $sName")
+           Vog.d( "$it - $sName")
             if (it.service.className == sName) {
                 return true
             }
