@@ -5,6 +5,8 @@
 
 **[更新日志](UpdateLog.md)**
 
+## **[文档](DOC.md)**
+
 ## Usage
 
 * Step 1. Add the JitPack repository to your build file

@@ -24,6 +24,7 @@ import cn.vove7.vtp.log.Vog
  * toast = Voast.with(context).top()
  * toast.showShort("message")
  */
+@Deprecated("不再使用")
 class Voast(
         private val context: Context,
         private val outDebug: Boolean

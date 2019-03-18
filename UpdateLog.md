@@ -1,5 +1,9 @@
 # Update Log
 
+- 2019-03-18
+
+  - 精简网络请求`NetHelper`
+
 - 2018-12-23
 
   - 日历事件可设置提前提醒时间CalendarHelper
