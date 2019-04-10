@@ -16,15 +16,6 @@ object Vog {
     private var output_level = Log.VERBOSE
 
     /**
-     * 网络日志
-     */
-    private var logServer: String = ""
-    /**
-     * 本地日志
-     */
-    private var localLogLevel = Log.DEBUG
-
-    /**
      * @param outputLevel Log.***
      */
     fun init(context: Context, outputLevel: Int): Vog {

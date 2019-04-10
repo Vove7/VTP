@@ -29,42 +29,46 @@ object ContactHelper {
     fun getAllContacts(context: Context): HashMap<String, ContactInfo> {
         val list = hashMapOf<String, ContactInfo>()
         if (!PermissionUtils.isAllGranted(context, requirePermissions)) {
-            if(context is Activity)
+            if (context is Activity)
                 PermissionUtils.autoRequestPermission(context, requirePermissions)
             return list
         }
         val contactUri = ContactsContract.Contacts.CONTENT_URI
-        val cursor = context.contentResolver.query(contactUri, contactProjection, null, null, null)
-        with(cursor) {
-            if (cursor.moveToFirst()) {
-                do {
-                    val id = cursor.getLong(0)
-                    //获取姓名
-                    val name = cursor.getString(1)
-
-                    val phonesCursor = context.contentResolver.query(
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI, phoneProjection,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + id, null, null)
-
-                    val phoneList = mutableListOf<String>()
-                    with(phonesCursor) {
-                        if (phonesCursor.moveToFirst()) {
-                            do {
-                                val num = phonesCursor.getString(0)
-                                phoneList.add(num.replace(" ",""))
-                            } while (phonesCursor.moveToNext())
-                        }
-                        list[name] = ContactInfo(name, phoneList).also {
-                            Vog.v(it)
-                        }
-                    }
-                } while (cursor!!.moveToNext())
-            } else {
-               Vog.d( "联系人 moveToFirst failed")
+        context.contentResolver.query(contactUri, contactProjection,
+                null, null, null)?.use { cursor ->
+            if (!cursor.moveToFirst()) {
+                Vog.d("联系人 moveToFirst failed")
+                return hashMapOf()
             }
+            do {
+                val id = cursor.getLong(0)
+                //获取姓名
+                var name = cursor.getString(1)
+
+                val phoneList = mutableListOf<String>()
+                context.contentResolver.query(
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI, phoneProjection,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + "=" + id,
+                        null, null
+                )?.use { c ->
+                    if (c.moveToFirst()) {
+                        do {
+                            val num = c.getString(0)
+                            phoneList.add(num.replace(" ", ""))
+                        } while (c.moveToNext())
+                    }
+                    name = name ?: try {
+                        phoneList[0]
+                    } catch (e: Exception) {
+                        "null"
+                    }
+                    list[name] = ContactInfo(name, phoneList).also {
+                        Vog.v(it)
+                    }
+                }
+            } while (cursor.moveToNext())
         }
-       Vog.d( "联系人更新: ${list.size}")
+        Vog.d("联系人更新: ${list.size}")
         return list
     }
-
 }
