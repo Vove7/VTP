@@ -25,7 +25,14 @@ import java.util.*
  * @param action () -> Unit
  */
 fun runOnUi(action: () -> Unit) {
-    val mainLoop = Looper.getMainLooper()
+    val mainLoop: Looper
+    try {
+        mainLoop = Looper.getMainLooper()
+    } catch (e: Exception) {
+        action.invoke()
+        e.printStackTrace()
+        return
+    }
     if (mainLoop == Looper.myLooper()) {
         action.invoke()
     } else {

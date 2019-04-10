@@ -1,8 +1,7 @@
 package cn.vove7.vtp.net
 
-import android.os.Handler
 import android.os.Looper
-import android.util.Log
+import cn.vove7.vtp.extend.runOnUi
 import cn.vove7.vtp.log.Vog
 import okhttp3.*
 import java.io.File
@@ -30,20 +29,18 @@ import kotlin.concurrent.thread
  * @author 1132412166
  * 2018/9/12
  */
-
+@Suppress("unused")
 object NetHelper {
 
     var timeout = 15L
 
-
     inline fun <reified T> get(
-            url: String, params: Map<String, String>?=null, requestCode: Int = 0,
+            url: String, params: Map<String, String>? = null, requestCode: Int = 0,
             callback: WrappedRequestCallback<T>.() -> Unit
-    ) {
+    ): Call {
 
         val client = OkHttpClient.Builder()
                 .readTimeout(timeout, TimeUnit.SECONDS).build()
-
 
         val request = Request.Builder().url(url)
                 .get().apply {
@@ -54,6 +51,7 @@ object NetHelper {
                 .build()
         val call = client.newCall(request)
         call(call, requestCode, callback)
+        return call
     }
 
 
@@ -69,7 +67,7 @@ object NetHelper {
             requestCode: Int = 0, files: Array<File>,
             filePartName: String = "multipartFile",
             callback: WrappedRequestCallback<T>.() -> Unit
-    ) {
+    ): Call {
         val client = OkHttpClient.Builder()
                 .readTimeout(timeout, TimeUnit.SECONDS).build()
 
@@ -94,6 +92,8 @@ object NetHelper {
                 .build()
         val call = client.newCall(request)
         call(call, requestCode, callback)
+        return call
+
     }
 
     /**
@@ -106,7 +106,7 @@ object NetHelper {
     inline fun <reified T> postJson(
             url: String, model: Any? = null, requestCode: Int = 0,
             callback: WrappedRequestCallback<T>.() -> Unit
-    ) {
+    ): Call {
         val client = OkHttpClient.Builder()
                 .readTimeout(timeout, TimeUnit.SECONDS).build()
 
@@ -120,6 +120,7 @@ object NetHelper {
                 .build()
         val call = client.newCall(request)
         call(call, requestCode, callback)
+        return call
     }
 
     inline fun <reified T> call(
@@ -130,21 +131,18 @@ object NetHelper {
         cb.invoke(callback)
         thread(isDaemon = true) {
             prepareIfNeeded()
-            var handler: Handler? = null
-            try {
-                handler = Handler(Looper.getMainLooper())
-            } catch (e: Exception) {
-            }
             call.enqueue(object : Callback {
                 override fun onFailure(call: Call, e: IOException) {
+                    callback.onBefore()
                     e.printStackTrace()
-                    handler?.post {
-                        callback.onFailed(requestCode, e)
-                    } ?: callback.onFailed(requestCode, e)
+
+                    callback.onFailed(requestCode, e)
+                    callback.onEnd()
                 }
 
                 override fun onResponse(call: Call, response: Response) {//响应成功更新UI
                     val s = response.body()?.string()
+                    callback.onBefore()
                     if (response.isSuccessful) {
                         try {
                             Vog.d("onResponse (${call.request().url()})--->\n$s")
@@ -152,25 +150,20 @@ object NetHelper {
                                 (s ?: "") as T
                             } else
                                 GsonHelper.fromJson<T>(s)!!
-                            handler?.post {
-                                callback.onSuccess(requestCode, bean)
-                            } ?: callback.onSuccess(requestCode, bean)
+                            callback.onSuccess(requestCode, bean)
 
                         } catch (e: Exception) {
                             e.printStackTrace()
-                            handler?.post {
-                                callback.onFailed(requestCode, e)
-                            } ?: callback.onFailed(requestCode, e)
-
+                            callback.onFailed(requestCode, e)
                         }
-                    } else handler?.post {
-                        callback.onFailed(requestCode, Exception("请求失败${response.message()}"))
-                    } ?: callback.onFailed(requestCode, Exception("请求失败${response.message()}"))
+                    } else callback.onFailed(requestCode, Exception("请求失败${response.message()}"))
 
+                    callback.onEnd()
                 }
             })
         }
     }
+
 
     fun prepareIfNeeded() {
         try {
@@ -185,17 +178,52 @@ object NetHelper {
 interface RequestCallback<T> {
     fun onSuccess(requestCode: Int, data: T)
     fun onFailed(requestCode: Int, e: Exception)
+    fun onBefore()
+    fun onEnd()
+
 }
 
 class WrappedRequestCallback<T> : RequestCallback<T> {
     private var _OnSuccess: ((Int, T) -> Unit)? = null
     private var _OnFailed: ((Int, Exception) -> Unit)? = null
+    private var _OnBefore: (() -> Unit)? = null
+    private var _OnEnd: (() -> Unit)? = null
+
+    companion object {
+        var errListener: ((e: Throwable) -> Unit)? = null
+    }
+
     override fun onSuccess(requestCode: Int, data: T) {
-        _OnSuccess?.invoke(requestCode, data)
+        runOnUi {
+            _OnSuccess?.invoke(requestCode, data)
+        }
     }
 
     override fun onFailed(requestCode: Int, e: Exception) {
-        _OnFailed?.invoke(requestCode, e)
+        errListener?.invoke(e)
+        runOnUi {
+            _OnFailed?.invoke(requestCode, e)
+        }
+    }
+
+    override fun onBefore() {
+        runOnUi {
+            _OnBefore?.invoke()
+        }
+    }
+
+    override fun onEnd() {
+        runOnUi {
+            _OnEnd?.invoke()
+        }
+    }
+
+    fun before(b: () -> Unit) {
+        _OnBefore = b
+    }
+
+    fun end(e: () -> Unit) {
+        _OnEnd = e
     }
 
     fun success(s: (Int, T) -> Unit) {
