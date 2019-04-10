@@ -3,8 +3,6 @@ package cn.vove7.vtp.log
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
-import java.io.File
-import java.nio.charset.Charset
 import java.text.DateFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -24,41 +22,14 @@ object Vog {
     /**
      * 本地日志
      */
-    private var log2Local: Boolean = false
     private var localLogLevel = Log.DEBUG
-    private var logPath = ""
-    private lateinit var logFle: File
-    private var MAX_LOG_FILE_SIZE = (1 shl 20).toLong()//1M
-
-    // TODO send2Server
-    fun send2Server(msg: String) {
-
-    }
 
     /**
      * @param outputLevel Log.***
      */
     fun init(context: Context, outputLevel: Int): Vog {
         output_level = outputLevel
-        logPath = context.externalCacheDir.parent
         return this
-    }
-
-    /**
-     * 开启日志本地保存
-     */
-    fun log2Local(localLogLevel: Int) {
-        this.localLogLevel = localLogLevel
-        this.log2Local = true
-        createLogFile()
-    }
-
-    private fun createLogFile() {
-        logFle = File(logPath, getLogName())
-    }
-
-    fun cancelLog2Local() {
-        this.log2Local = false
     }
 
     fun d(msg: Any?) {
@@ -96,57 +67,22 @@ object Vog {
     const val TAG = "VOG"
 
     private fun println(priority: Int, msg: String) {
+        if (output_level > priority)
+            return//省运算
+
         val pre = findCaller(3)?.let {
             (it.methodName + "(" + it.fileName +
                     ":" + it.lineNumber + ")")
         }
-        if (output_level <= priority) {
-            try {
-                Log.println(priority, TAG, "$pre  >> $msg\n")
-            } catch (e: Exception) {
-                when (priority) {
-                    Log.ERROR -> System.err.println("$pre  >> $msg")
-                    else -> println("$pre  >> $msg")
-                }
+        try {
+            Log.println(priority, TAG, "$pre  >> $msg\n")
+        } catch (e: Exception) {
+            when (priority) {
+                Log.ERROR -> System.err.println("$pre  >> $msg")
+                else -> println("$pre  >> $msg")
             }
         }
-        if (log2Local && localLogLevel <= priority) {
-            val date = dateFormat.format(Date(System.currentTimeMillis()))
-            log2File("$date: $pre  >> $msg\n")
-        }
     }
-
-
-    private fun log2File(s: String) {
-        if (checkLogFileSize(logFle.length())) {
-            createLogFile()
-        }
-        logFle.appendText(s, Charset.forName("UTF-8"))
-    }
-
-    private fun getLogName(): String {
-        var latestName = "app.log"
-        var latestTime = 0L
-        var size = 0L
-        File(logPath)
-                .walk()
-                .filter { it.isFile }
-                .filter { it.extension == "log" }
-                .filter { it.name.startsWith("app") }
-                .forEach {
-                    if (it.lastModified() > latestTime) {
-                        latestName = it.name
-                        latestTime = it.lastModified()
-                        size = it.length()
-                    }
-                }
-        return if (latestTime != 0L && checkLogFileSize(size)) {
-            latestName
-        } else {//create new
-            "app${System.currentTimeMillis() % 10000}.log"
-        }
-    }
-
 
     private fun findCaller(upDepth: Int): StackTraceElement? {
         // 获取堆栈信息
@@ -170,7 +106,4 @@ object Vog {
         }
     }
 
-    private fun checkLogFileSize(s: Long): Boolean {
-        return s <= MAX_LOG_FILE_SIZE
-    }
 }
