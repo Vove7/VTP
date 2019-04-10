@@ -14,15 +14,20 @@ class NetTest {
 
     @Test
     fun main() {
-        NetHelper.get<String>("https://www.baidu.com/") {
+        val call = NetHelper.get<String>("https://www.baidu.com/") {
             success { _, s ->
                 println(s)
             }
             fail { _, e ->
-                e.printStackTrace()
+                println(e.message)
             }
+            before { println("before") }
+            end { println("end") }
+            cancel { println("取消") }
         }
-        sleep(5000)
+        sleep(10)
+//        call.cancel()
+        sleep(10000)
     }
 
 }

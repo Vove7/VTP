@@ -28,9 +28,8 @@ fun runOnUi(action: () -> Unit) {
     val mainLoop: Looper
     try {
         mainLoop = Looper.getMainLooper()
-    } catch (e: Exception) {
+    } catch (e: RuntimeException) {
         action.invoke()
-        e.printStackTrace()
         return
     }
     if (mainLoop == Looper.myLooper()) {

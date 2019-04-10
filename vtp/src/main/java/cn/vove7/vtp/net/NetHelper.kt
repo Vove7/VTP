@@ -180,6 +180,7 @@ interface RequestCallback<T> {
     fun onFailed(requestCode: Int, e: Exception)
     fun onBefore()
     fun onEnd()
+    fun onCancel()
 
 }
 
@@ -188,6 +189,7 @@ class WrappedRequestCallback<T> : RequestCallback<T> {
     private var _OnFailed: ((Int, Exception) -> Unit)? = null
     private var _OnBefore: (() -> Unit)? = null
     private var _OnEnd: (() -> Unit)? = null
+    private var _OnCancel: (() -> Unit)? = null
 
     companion object {
         var errListener: ((e: Throwable) -> Unit)? = null
@@ -201,14 +203,24 @@ class WrappedRequestCallback<T> : RequestCallback<T> {
 
     override fun onFailed(requestCode: Int, e: Exception) {
         errListener?.invoke(e)
-        runOnUi {
-            _OnFailed?.invoke(requestCode, e)
+        if (e is IOException && e.message == "Canceled") {
+            onCancel()
+        } else {
+            runOnUi {
+                _OnFailed?.invoke(requestCode, e)
+            }
         }
     }
 
     override fun onBefore() {
         runOnUi {
             _OnBefore?.invoke()
+        }
+    }
+
+    override fun onCancel() {
+        runOnUi {
+            _OnCancel?.invoke()
         }
     }
 
@@ -220,6 +232,10 @@ class WrappedRequestCallback<T> : RequestCallback<T> {
 
     fun before(b: () -> Unit) {
         _OnBefore = b
+    }
+
+    fun cancel(c: () -> Unit) {
+        _OnCancel = c
     }
 
     fun end(e: () -> Unit) {
