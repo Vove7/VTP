@@ -1,7 +1,12 @@
 package cn.vove7.vtp
 
+import android.annotation.SuppressLint
+import cn.vove7.vtp.net.GsonHelper
 import cn.vove7.vtp.net.NetHelper
+import cn.vove7.vtp.net.WrappedRequestCallback
+import cn.vove7.vtp.utils.SecureHelper.signData
 import org.junit.Test
+import java.io.Serializable
 import java.lang.Thread.sleep
 
 /**
@@ -28,6 +33,126 @@ class NetTest {
         sleep(10)
 //        call.cancel()
         sleep(10000)
+    }
+
+    @Test
+    fun getLastInfo() {
+        val lock = Object()
+        WrapperNetHelper.get<M>(
+                "http://127.0.0.1:4000/1.json") {
+            success { _, b ->
+                println(b)
+                lock.notifyASync()
+            }
+            fail { _, e ->
+                e.printStackTrace()
+                lock.notifyASync()
+            }
+        }
+
+        lock.waitASync()
+        print("结束")
+    }
+}
+
+fun Object.notifyASync() {
+    synchronized(this) {
+        notify()
+    }
+}
+
+fun Object.waitASync() {
+    synchronized(this) {
+        wait()
+    }
+}
+
+object WrapperNetHelper {
+
+    inline fun <reified T> postJson(
+            url: String, model: Any? = null, requestCode: Int = -1, arg1: String? = null,
+            crossinline callback: WrappedRequestCallback<ResponseMessage<T>>.() -> Unit) {
+
+        NetHelper.postJson(url, BaseRequestModel(model, arg1), requestCode, callback)
+
+    }
+    inline fun <reified T> get(
+            url: String, params: Map<String, String>? = null, requestCode: Int = 0,
+            callback: WrappedRequestCallback<ResponseMessage<T>>.() -> Unit
+    ) {
+
+        NetHelper.get(url, params, requestCode, callback)
+
+    }
+}
+
+class BaseRequestModel<T : Any>(var body: T? = null, val arg1: String? = null)
+    : Serializable {
+    val timestamp = (System.currentTimeMillis() / 1000)
+    val userId = -1L
+    var sign: String = signData(GsonHelper.toJson(body), userId, timestamp)
+    val userToken = null
+    @SuppressLint("MissingPermission")
+    val deviceId: String = "0"
+
+}
+
+
+data class M(
+        var a: Int? = null,
+        var b: String? = null,
+        var c: Array<Int>? = null
+)
+
+/**
+ * User: Vove
+ * Date: 2018/7/11
+ * Time: 22:35
+ */
+open class ResponseMessage<T> {
+    var code: Int = -1
+
+    var message: String = "null"
+
+    var err: String? = null
+    var data: T? = null
+
+    fun isOk(): Boolean {
+        return code == CODE_OK
+    }
+
+    fun isInvalid(): Boolean {
+        return code == CODE_INVALID
+    }
+
+    fun tokenIsOutdate(): Boolean {
+        return code == CODE_TOKEN_OUT_DATE
+    }
+
+
+    override fun toString(): String {
+        return "{code=$code, message=$message, err=$err, data=$data}"
+    }
+
+    constructor(code: Int, message: String) {
+        this.code = code
+        this.message = message
+    }
+
+    constructor()
+
+    companion object {
+
+        const val CODE_OK = 0
+        const val CODE_FAILED = 1//失败
+        const val CODE_SERVER_ERR = 2//出错
+        const val CODE_INVALID = 5//无效
+        const val CODE_TOKEN_OUT_DATE = 6//token过期
+
+        fun <T> error(err: String?): ResponseMessage<T> {
+            return ResponseMessage(CODE_FAILED, err
+                ?: "null")
+        }
     }
 
 }

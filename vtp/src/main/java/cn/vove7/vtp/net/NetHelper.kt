@@ -50,7 +50,7 @@ object NetHelper {
                 }
                 .build()
         val call = client.newCall(request)
-        call(call, requestCode, callback)
+        call(url, call, requestCode, callback)
         return call
     }
 
@@ -91,7 +91,7 @@ object NetHelper {
                 .post(requestBody)
                 .build()
         val call = client.newCall(request)
-        call(call, requestCode, callback)
+        call(url, call, requestCode, callback)
         return call
 
     }
@@ -119,12 +119,13 @@ object NetHelper {
                 .post(requestBody)
                 .build()
         val call = client.newCall(request)
-        call(call, requestCode, callback)
+        call(url, call, requestCode, callback)
         return call
     }
 
     inline fun <reified T> call(
-            call: Call, requestCode: Int = 0,
+            url: String, call: Call,
+            requestCode: Int = 0,
             cb: WrappedRequestCallback<T>.() -> Unit
     ) {
         val callback = WrappedRequestCallback<T>()
@@ -145,7 +146,7 @@ object NetHelper {
                     callback.onBefore()
                     if (response.isSuccessful) {
                         try {
-                            Vog.d("onResponse (${call.request().url()})--->\n$s")
+                            Vog.d("onResponse ($url) ---> \n$s")
                             val bean: T = if (T::class.java == String::class.java) {
                                 (s ?: "") as T
                             } else
