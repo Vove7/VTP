@@ -175,17 +175,9 @@ object NetHelper {
 
 }
 
-interface RequestCallback<T> {
-    fun onSuccess(requestCode: Int, data: T)
-    fun onFailed(requestCode: Int, e: Exception)
-    fun onBefore()
-    fun onEnd()
-    fun onCancel()
 
-}
-
-class WrappedRequestCallback<T> : RequestCallback<T> {
-    private var _OnSuccess: ((Int, T) -> Unit)? = null
+class WrappedRequestCallback<T> {
+    var _OnSuccess: ((Int, T) -> Unit)? = null
     private var _OnFailed: ((Int, Exception) -> Unit)? = null
     private var _OnBefore: (() -> Unit)? = null
     private var _OnEnd: (() -> Unit)? = null
@@ -195,13 +187,13 @@ class WrappedRequestCallback<T> : RequestCallback<T> {
         var errListener: ((e: Throwable) -> Unit)? = null
     }
 
-    override fun onSuccess(requestCode: Int, data: T) {
+    inline fun <reified A> onSuccess(requestCode: Int, data: A) {
         runOnUi {
-            _OnSuccess?.invoke(requestCode, data)
+            _OnSuccess?.invoke(requestCode, data as T)
         }
     }
 
-    override fun onFailed(requestCode: Int, e: Exception) {
+    fun onFailed(requestCode: Int, e: Exception) {
         errListener?.invoke(e)
         if (e is IOException && e.message == "Canceled") {
             onCancel()
@@ -212,19 +204,19 @@ class WrappedRequestCallback<T> : RequestCallback<T> {
         }
     }
 
-    override fun onBefore() {
+    fun onBefore() {
         runOnUi {
             _OnBefore?.invoke()
         }
     }
 
-    override fun onCancel() {
+    fun onCancel() {
         runOnUi {
             _OnCancel?.invoke()
         }
     }
 
-    override fun onEnd() {
+    fun onEnd() {
         runOnUi {
             _OnEnd?.invoke()
         }
