@@ -1,11 +1,8 @@
 package cn.vove7.vtp
 
-import android.annotation.SuppressLint
-import cn.vove7.vtp.net.GsonHelper
 import cn.vove7.vtp.net.NetHelper
 import cn.vove7.vtp.net.WrappedRequestCallback
 import cn.vove7.vtp.net.httpGet
-import cn.vove7.vtp.utils.SecureHelper.signData
 import org.junit.Test
 import java.io.Serializable
 import java.lang.Thread.sleep
@@ -111,10 +108,8 @@ class BaseRequestModel<T : Any>(var body: T? = null, val arg1: String? = null)
     : Serializable {
     val timestamp = (System.currentTimeMillis() / 1000)
     val userId = -1L
-    var sign: String = signData(GsonHelper.toJson(body), userId, timestamp)
+    var sign: String = "" //TODO 签名数据 signData(GsonHelper.toJson(body), userId, timestamp)
     val userToken = null
-    @SuppressLint("MissingPermission")
-    val deviceId: String = "0"
 
 }
 
