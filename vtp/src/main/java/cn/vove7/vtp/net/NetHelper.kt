@@ -35,7 +35,7 @@ object NetHelper {
     var timeout = 15L
 
     inline fun <reified T> get(
-            url: String, params: Map<String, String>? = null, requestCode: Int = 0,
+            url: String, params: Map<String, *>? = null, requestCode: Int = 0,
             callback: WrappedRequestCallback<T>.() -> Unit
     ): Call {
 
@@ -45,7 +45,7 @@ object NetHelper {
         val request = Request.Builder().url(url)
                 .get().apply {
                     params?.forEach {
-                        addHeader(it.key, it.value)
+                        addHeader(it.key, it.value.toString())
                     }
                 }
                 .build()
@@ -138,7 +138,7 @@ object NetHelper {
                     e.printStackTrace()
 
                     callback.onFailed(requestCode, e)
-                    callback.onEnd()
+                    callback.onEnd(call)
                 }
 
                 override fun onResponse(call: Call, response: Response) {//响应成功更新UI
@@ -159,7 +159,7 @@ object NetHelper {
                         }
                     } else callback.onFailed(requestCode, Exception("请求失败${response.message()}"))
 
-                    callback.onEnd()
+                    callback.onEnd(call)
                 }
             })
         }
@@ -176,12 +176,21 @@ object NetHelper {
 
 }
 
-
+/**
+ * 调用顺序 before -> [success|fail|cancel] -> end
+ *
+ * @param T
+ * @property _OnSuccess Function2<Int, T, Unit>?
+ * @property _OnFailed Function2<Int, Exception, Unit>?
+ * @property _OnBefore Function0<Unit>?
+ * @property _OnEnd Function0<Unit>?
+ * @property _OnCancel Function0<Unit>?
+ */
 class WrappedRequestCallback<T> {
     var _OnSuccess: ((Int, T) -> Unit)? = null
     private var _OnFailed: ((Int, Exception) -> Unit)? = null
     private var _OnBefore: (() -> Unit)? = null
-    private var _OnEnd: (() -> Unit)? = null
+    private var _OnEnd: ((Call) -> Unit)? = null
     private var _OnCancel: (() -> Unit)? = null
 
     companion object {
@@ -217,9 +226,9 @@ class WrappedRequestCallback<T> {
         }
     }
 
-    fun onEnd() {
+    fun onEnd(call:Call) {
         runOnUi {
-            _OnEnd?.invoke()
+            _OnEnd?.invoke(call)
         }
     }
 
@@ -231,7 +240,7 @@ class WrappedRequestCallback<T> {
         _OnCancel = c
     }
 
-    fun end(e: () -> Unit) {
+    fun end(e: (Call) -> Unit) {
         _OnEnd = e
     }
 

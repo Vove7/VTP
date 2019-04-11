@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import cn.vove7.vtp.net.GsonHelper
 import cn.vove7.vtp.net.NetHelper
 import cn.vove7.vtp.net.WrappedRequestCallback
+import cn.vove7.vtp.net.httpGet
 import cn.vove7.vtp.utils.SecureHelper.signData
 import org.junit.Test
 import java.io.Serializable
@@ -53,6 +54,25 @@ class NetTest {
         lock.waitASync()
         print("结束")
     }
+
+    @Test
+    fun testExt() {
+        val lock = Object()
+        mapOf(Pair("1", 1)).httpGet<ResponseMessage<M>>("http://127.0.0.1:4000/1.json") {
+            success { i, responseMessage ->
+                println(responseMessage)
+            }
+            fail { _, e ->
+                e.printStackTrace()
+            }
+            end {
+                print("是否取消请求" + it.isCanceled)
+                lock.notifyASync()
+                print("结束")
+            }
+        }
+        lock.waitASync()
+    }
 }
 
 fun Object.notifyASync() {
@@ -76,6 +96,7 @@ object WrapperNetHelper {
         NetHelper.postJson(url, BaseRequestModel(model, arg1), requestCode, callback)
 
     }
+
     inline fun <reified T> get(
             url: String, params: Map<String, String>? = null, requestCode: Int = 0,
             callback: WrappedRequestCallback<ResponseMessage<T>>.() -> Unit
