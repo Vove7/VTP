@@ -1,6 +1,9 @@
 package cn.vove7.vtp
 
 import cn.vove7.vtp.log.Vog
+import cn.vove7.vtp.net.fromJson
+import cn.vove7.vtp.net.toJson
+import com.google.gson.annotations.Expose
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -27,6 +30,24 @@ class ExampleUnitTest {
         Vog.d("debug")
         Vog.e("wr")
         Vog.i("wr")
+
+    }
+
+    @Test
+    fun gsonTest() {
+        val s = A(1).toJson()
+        println(s)
+        print(s.fromJson<A>())
+    }
+
+    class A(@Expose(serialize = true)
+                 val a: Int = 0) {
+
+        @Expose(deserialize = false)
+        var s: String? = "sss"
+        override fun toString(): String {
+            return "A(a=$a, s=$s)"
+        }
 
     }
 

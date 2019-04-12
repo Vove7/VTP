@@ -84,13 +84,23 @@ fun Object.waitASync() {
     }
 }
 
+/**
+ * 封装示例：请求体封装
+ * (RequestModel(sign, timestamp, [body]))
+ *        |
+ *        |
+ *       http
+ *        |
+ *        ↓
+ * ResponseMessage(code,message,[data])
+ */
 object WrapperNetHelper {
 
     inline fun <reified T> postJson(
             url: String, model: Any? = null, requestCode: Int = -1, arg1: String? = null,
             crossinline callback: WrappedRequestCallback<ResponseMessage<T>>.() -> Unit) {
 
-        NetHelper.postJson(url, BaseRequestModel(model, arg1), requestCode, callback)
+        NetHelper.postJson(url, RequestModel(model, arg1), requestCode, callback)
 
     }
 
@@ -104,7 +114,7 @@ object WrapperNetHelper {
     }
 }
 
-class BaseRequestModel<T : Any>(var body: T? = null, val arg1: String? = null)
+class RequestModel<T : Any>(var body: T? = null, val arg1: String? = null)
     : Serializable {
     val timestamp = (System.currentTimeMillis() / 1000)
     val userId = -1L

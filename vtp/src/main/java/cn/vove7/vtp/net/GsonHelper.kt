@@ -3,6 +3,7 @@ package cn.vove7.vtp.net
 import com.google.gson.ExclusionStrategy
 import com.google.gson.FieldAttributes
 import com.google.gson.GsonBuilder
+import com.google.gson.annotations.Expose
 import com.google.gson.reflect.TypeToken
 import java.lang.reflect.Type
 
@@ -24,15 +25,17 @@ object GsonHelper {
             addSerializationExclusionStrategy(object : ExclusionStrategy {
 
                 override fun shouldSkipField(fieldAttributes: FieldAttributes): Boolean {
-                    val ignore = fieldAttributes.getAnnotation(GsonIgnore::class.java)
-                    return ignore != null
+                    val expose = fieldAttributes.getAnnotation(Expose::class.java)
+                    return if (expose == null) false
+                    else !expose.serialize
                 }
 
                 override fun shouldSkipClass(aClass: Class<*>): Boolean = false
             }).addDeserializationExclusionStrategy(object : ExclusionStrategy {
                 override fun shouldSkipField(fieldAttributes: FieldAttributes): Boolean {
-                    val ignore = fieldAttributes.getAnnotation(GsonIgnore::class.java)
-                    return ignore != null
+                    val expose = fieldAttributes.getAnnotation(Expose::class.java)
+                    return if (expose == null) false
+                    else !expose.deserialize
                 }
 
                 override fun shouldSkipClass(aClass: Class<*>): Boolean = false
@@ -79,4 +82,8 @@ object GsonHelper {
  */
 fun Any.toJson(): String {
     return GsonHelper.toJson(this)
+}
+
+inline fun <reified T>String.fromJson(): T? {
+    return GsonHelper.fromJson<T>(this)
 }
