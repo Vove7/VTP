@@ -9,14 +9,14 @@ import java.lang.reflect.Type
 
 /**
  * # GsonHelper
- *
+ * 使用[Expose] 注解属性，是否需要被序列化
  * @author Administrator
  * 2018/9/19
  */
 object GsonHelper {
 
     /**
-     * 被[GsonIgnore]标记的属性，不会被序列化
+     * 被[Expose]标记的属性，不会被序列化
      */
     val builder
         get() = GsonBuilder().apply {
@@ -84,6 +84,11 @@ fun Any.toJson(): String {
     return GsonHelper.toJson(this)
 }
 
+/**
+ * json字符串 转 T
+ * @receiver String
+ * @return T?
+ */
 inline fun <reified T>String.fromJson(): T? {
     return GsonHelper.fromJson<T>(this)
 }
