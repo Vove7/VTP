@@ -1,3 +1,5 @@
+[![](https://jitpack.io/v/Vove7/VTP.svg)](https://jitpack.io/#Vove7/VTP)
+
 # VTP
 
 > - Vove's Tools Package
@@ -20,31 +22,16 @@ allprojects {
     }
 }
 ```
-maven:
-```xml
-<repositories>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
-</repositories>
-```
 
 * Step 2. Add the dependency
 
 gradle:
 ```groovy
 dependencies {
-    implementation 'com.github.Vove7:VTP:0.0.3'
+    implementation 'com.github.Vove7:VTP:最新版本'
 }
 ```
-maven:
-```xml
-<dependency>
-    <groupId>com.github.Vove7</groupId>
-    <artifactId>VTP</artifactId>
-    <version>0.0.3</version>
-</dependency>
-```
+
+最新版本： [![](https://jitpack.io/v/Vove7/VTP.svg)](https://jitpack.io/#Vove7/VTP)
 
 

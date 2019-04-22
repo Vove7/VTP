@@ -6,6 +6,7 @@ import cn.vove7.vtp.net.httpGet
 import org.junit.Test
 import java.io.Serializable
 import java.lang.Thread.sleep
+import java.util.concurrent.CountDownLatch
 
 /**
  * # NetTest
@@ -17,6 +18,7 @@ class NetTest {
 
     @Test
     fun main() {
+        val l = CountDownLatch(1)
         val call = NetHelper.get<String>("https://www.baidu.com/") {
             success { _, s ->
                 println(s)
@@ -25,12 +27,14 @@ class NetTest {
                 println(e.message)
             }
             before { println("before") }
-            end { println("end") }
+            end { l.countDown() }
+
             cancel { println("取消") }
         }
-        sleep(10)
-//        call.cancel()
-        sleep(10000)
+        l.await() //等待请求结束
+
+        //可以终止 request
+        call.cancel()
     }
 
     @Test
