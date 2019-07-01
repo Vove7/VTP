@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package cn.vove7.vtp.app
 
 import android.content.Context
@@ -53,7 +55,11 @@ object AppHelper {
             if (app.packageName == context.packageName && includeSelf) {
                 continue
             }
-            appList.add(AppInfo(app.packageName))
+            try {
+                appList.add(AppInfo(app.packageName))
+            } catch (e: Exception) {//NameNotFoundException
+                e.printStackTrace()
+            }
         }
         return appList
     }
