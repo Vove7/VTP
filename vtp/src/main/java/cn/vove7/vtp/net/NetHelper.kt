@@ -35,7 +35,7 @@ object NetHelper {
     var timeout = 15L
 
     inline fun <reified T> get(
-            url: String, params: Map<String, *>? = null, requestCode: Int = 0,
+            url: String, headerParams: Map<String, *>? = null, requestCode: Int = 0,
             callback: WrappedRequestCallback<T>.() -> Unit
     ): Call {
 
@@ -44,7 +44,7 @@ object NetHelper {
 
         val request = Request.Builder().url(url)
                 .get().apply {
-                    params?.forEach {
+                    headerParams?.forEach {
                         addHeader(it.key, it.value.toString())
                     }
                 }
@@ -105,6 +105,7 @@ object NetHelper {
      */
     inline fun <reified T> postJson(
             url: String, model: Any? = null, requestCode: Int = 0,
+            headers: Map<String, String>? = null,
             callback: WrappedRequestCallback<T>.() -> Unit
     ): Call {
         val client = OkHttpClient.Builder()
@@ -117,6 +118,11 @@ object NetHelper {
         Vog.d("post ($url)\n$json")
         val request = Request.Builder().url(url)
                 .post(requestBody)
+                .apply {
+                    headers?.forEach {
+                        addHeader(it.key, it.value)
+                    }
+                }
                 .build()
         val call = client.newCall(request)
         call(url, call, requestCode, callback)
@@ -226,7 +232,7 @@ class WrappedRequestCallback<T> {
         }
     }
 
-    fun onEnd(call:Call) {
+    fun onEnd(call: Call) {
         runOnUi {
             _OnEnd?.invoke(call)
         }

@@ -20,11 +20,13 @@ package cn.vove7.vtp.net
  * @param requestCode Int
  * @param callback WrappedRequestCallback<T>.() -> Unit
  */
-inline fun <reified T> Any?.httpPost(
+
+inline fun <reified T> RequestModel.httpPost(
         url: String, requestCode: Int = 0,
         callback: WrappedRequestCallback<T>.() -> Unit) {
-    NetHelper.postJson(url, this, requestCode, callback)
+    NetHelper.postJson(url, this, requestCode, callback = callback)
 }
+
 
 inline fun <reified T> Map<String, *>.httpGet(
         url: String, requestCode: Int = 0,
@@ -37,3 +39,9 @@ inline fun <reified T> Map<String, *>.httpPost(
         callback: WrappedRequestCallback<T>.() -> Unit) {
     NetHelper.get(url, this, requestCode, callback)
 }
+
+/**
+ * 请求体可继承此接口
+ * [RequestModel.httpPost]
+ */
+interface RequestModel

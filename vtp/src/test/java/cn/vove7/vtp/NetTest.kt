@@ -1,12 +1,17 @@
 package cn.vove7.vtp
 
+import cn.vove7.vtp.log.Vog
+import cn.vove7.vtp.net.GsonHelper
 import cn.vove7.vtp.net.NetHelper
 import cn.vove7.vtp.net.WrappedRequestCallback
 import cn.vove7.vtp.net.httpGet
+import okhttp3.*
 import org.junit.Test
 import java.io.Serializable
-import java.lang.Thread.sleep
+import java.security.MessageDigest
+import java.security.NoSuchAlgorithmException
 import java.util.concurrent.CountDownLatch
+import java.util.concurrent.TimeUnit
 
 /**
  * # NetTest
@@ -37,6 +42,69 @@ class NetTest {
         call.cancel()
     }
 
+
+    @Test
+    fun testRequest() {
+
+        request<String>("http://localhost:8080/test") {
+            success { _, data ->
+                print(data)
+            }
+            fail { _, e ->
+                e.printStackTrace()
+            }
+        }
+    }
+
+    inline fun <reified T> request(
+            url: String, model: Any? = null,
+            callback: WrappedRequestCallback<T>.() -> Unit
+    ): Call {
+        val client = OkHttpClient.Builder()
+                .readTimeout(NetHelper.timeout, TimeUnit.SECONDS).build()
+
+        val json = GsonHelper.toJson(model)
+        val requestBody = FormBody.create(MediaType
+                .parse("application/json; charset=utf-8"), json)
+
+        val key = "#A$^&J%C"//加密key
+
+        val sign = md5(json + key)
+
+        Vog.d("post ($url)\n$json")
+        val request = Request.Builder().url(url)
+                .post(requestBody)//请求体
+                .addHeader("sign", sign)//请求头加入sign
+                .build()
+
+        val call = client.newCall(request)
+        NetHelper.call(url, call, 0, callback)
+        return call
+    }
+
+    fun md5(str: String): String {
+        try {
+            val instance: MessageDigest = MessageDigest.getInstance("MD5")//获取md5加密对象
+            val digest: ByteArray = instance.digest(str.toByteArray())//对字符串加密，返回字节数组
+            val sb = StringBuffer()
+            for (b in digest) {
+                val i: Int = b.toInt() and 0xff//获取低八位有效值
+                var hexString = Integer.toHexString(i)//将整数转化为16进制
+                if (hexString.length < 2) {
+                    hexString = "0$hexString"//如果是一位的话，补0
+                }
+                sb.append(hexString)
+            }
+            return sb.toString()
+
+        } catch (e: NoSuchAlgorithmException) {
+            e.printStackTrace()
+        }
+
+        return ""
+    }
+
+
     @Test
     fun getLastInfo() {
         val lock = Object()
@@ -60,8 +128,12 @@ class NetTest {
     fun testExt() {
         val lock = Object()
         mapOf(Pair("1", 1)).httpGet<ResponseMessage<M>>("http://127.0.0.1:4000/1.json") {
-            success { i, responseMessage ->
-                println(responseMessage)
+            success { i, responseModel ->
+                if (responseModel.isOk()) {//检查请求结果
+                    println(responseModel)
+                } else {
+                    print(responseModel.message)
+                }
             }
             fail { _, e ->
                 e.printStackTrace()
@@ -102,18 +174,18 @@ object WrapperNetHelper {
 
     inline fun <reified T> postJson(
             url: String, model: Any? = null, requestCode: Int = -1, arg1: String? = null,
-            crossinline callback: WrappedRequestCallback<ResponseMessage<T>>.() -> Unit) {
+            crossinline callback: WrappedRequestCallback<ResponseMessage<T>>.() -> Unit): Call {
 
-        NetHelper.postJson(url, RequestModel(model, arg1), requestCode, callback)
+        return NetHelper.postJson(url, RequestModel(model, arg1), requestCode, callback = callback)
 
     }
 
     inline fun <reified T> get(
             url: String, params: Map<String, String>? = null, requestCode: Int = 0,
             callback: WrappedRequestCallback<ResponseMessage<T>>.() -> Unit
-    ) {
+    ): Call {
 
-        NetHelper.get(url, params, requestCode, callback)
+        return NetHelper.get(url, params, requestCode, callback)
 
     }
 }
