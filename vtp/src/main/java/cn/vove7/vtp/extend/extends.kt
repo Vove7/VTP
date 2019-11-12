@@ -195,18 +195,3 @@ fun Double.scale(scale: Int): Double {
     return bd.toDouble()
 }
 
-/**
- * 当没有key时,设置map[k] = v 并返回v
- * @receiver Map<K, V>
- * @param k K
- * @param v V
- * @return V
- */
-inline fun <reified K, reified V> HashMap<K, V>.getOrSetDefault(k: K, v: V): V {
-    return if (containsKey(k)) {
-        get(k)!!
-    } else {
-        this[k] = v
-        v
-    }
-}

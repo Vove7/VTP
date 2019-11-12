@@ -35,13 +35,14 @@ object FileHelper {
      * 暂时最大转换单位 ***Tb
      * @param units 自定义单位值
      */
-    fun getAdapterFileSize(size: Long, units: Array<String> = sizeUnits): String {
+    fun getAdapterFileSize(size: Long, units: Array<String>? = null): String {
         var i = 0
+        val sizeUnits = units?:arrayOf("bytes", "KB", "MB", "GB", "TB")
         while (size < 10L && i < sizeUnits.size) {
             size shl 10
             i++
         }
-        return "$size${units[i]}"
+        return "$size${sizeUnits[i]}"
     }
 
     /**
@@ -68,5 +69,4 @@ object FileHelper {
         }
     }
 
-    private val sizeUnits = arrayOf("bytes", "KB", "MB", "GB", "TB")
 }
