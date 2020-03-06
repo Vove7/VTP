@@ -51,7 +51,6 @@ object AppHelper {
         val list = man.getInstalledPackages(0)
         val appList = mutableListOf<AppInfo>()
         for (app in list) {
-            val name = app.applicationInfo.loadLabel(man).toString()
             if (app.packageName == context.packageName && includeSelf) {
                 continue
             }
