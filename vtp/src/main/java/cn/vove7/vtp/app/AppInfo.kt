@@ -8,15 +8,20 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.graphics.drawable.Drawable
+import cn.vove7.vtp.weaklazy.weakLazy
 
 /**
  * App信息类
  */
+@Suppress("MemberVisibilityCanBePrivate")
 open class AppInfo(val packageName: String) {
-    val name: String?
-        get() = packageInfo?.applicationInfo?.loadLabel(app.packageManager)?.toString()
-    val icon: Drawable?
-        get() = packageInfo?.applicationInfo?.loadIcon(app.packageManager)
+    val name: String? by lazy {
+        packageInfo?.applicationInfo?.loadLabel(app.packageManager)?.toString()
+    }
+
+    val icon: Drawable? by weakLazy {
+        packageInfo?.applicationInfo?.loadIcon(app.packageManager)
+    }
 
     override fun toString(): String {
         return "AppInfo(name='$name', packageName='$packageName', versionName='$versionName', versionCode=$versionCode)"
@@ -24,9 +29,10 @@ open class AppInfo(val packageName: String) {
 
     private val packageInfo: PackageInfo?
         get() = app.packageManager.getPackageInfo(packageName, 0)
-    val versionName: String? get() = packageInfo?.versionName
 
-    var versionCode: Int = packageInfo?.versionCode ?: -1
+    val versionName: String? by lazy { packageInfo?.versionName }
+
+    val versionCode: Int by lazy { packageInfo?.versionCode ?: -1 }
     var priority: Int = 0
 
     companion object {
@@ -63,14 +69,16 @@ open class AppInfo(val packageName: String) {
     /**
      * 是否为用户安装应用
      */
-    val isUserApp
-        get() = ((packageInfo?.applicationInfo?.flags ?: 0) and ApplicationInfo.FLAG_SYSTEM) == 0
+    val isUserApp by lazy {
+        ((packageInfo?.applicationInfo?.flags ?: 0) and ApplicationInfo.FLAG_SYSTEM) == 0
+    }
 
     /**
      * 是否为系统应用
      */
-    val isSysApp
-        get() = ((packageInfo?.applicationInfo?.flags ?: 0) and ApplicationInfo.FLAG_SYSTEM) == 0
+    val isSysApp by lazy {
+        ((packageInfo?.applicationInfo?.flags ?: 0) and ApplicationInfo.FLAG_SYSTEM) == 0
+    }
 
     /**
      * 是否授权此权限
@@ -86,17 +94,13 @@ open class AppInfo(val packageName: String) {
     /**
      * 是否为输入法
      */
-    val isInputMethod: Boolean
-        get() {
-            val pm = app.packageManager
-            val pkgInfo = pm.getPackageInfo(packageName, PackageManager.GET_SERVICES)
-            pkgInfo.services?.forEach {
-                if (it.permission == Manifest.permission.BIND_INPUT_METHOD) {
-                    return true
-                }
-            }
-            return false
-        }
+    val isInputMethod: Boolean by lazy {
+        val pm = app.packageManager
+        val pkgInfo = pm.getPackageInfo(packageName, PackageManager.GET_SERVICES)
+        pkgInfo.services?.any {
+            it.permission == Manifest.permission.BIND_INPUT_METHOD
+        } ?: false
+    }
 
     /**
      * 获取活动列表
